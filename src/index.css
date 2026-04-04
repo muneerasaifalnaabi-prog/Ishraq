@@ -1,0 +1,84 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Theme 1: Girly/Vibrant (Soft Pink/Rose Gold) */
+    --background: 340 100% 98%;
+    --foreground: 340 50% 15%;
+    --primary: 340 82% 62%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 340 60% 94%;
+    --secondary-foreground: 340 50% 30%;
+    --card: 0 0% 100%;
+    --card-foreground: 340 50% 15%;
+    --accent: 340 82% 80%;
+    --accent-foreground: 340 50% 20%;
+    --success: 150 60% 50%;
+  }
+
+  .theme-calm {
+    /* Theme 2: Calm / Pastel (Mint/Lavender) */
+    --background: 160 30% 98%;
+    --foreground: 160 50% 20%;
+    --primary: 160 40% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 30% 92%;
+    --secondary-foreground: 160 50% 30%;
+    --card: 0 0% 100%;
+    --card-foreground: 160 50% 20%;
+    --accent: 250 40% 75%;
+    --accent-foreground: 250 50% 20%;
+    --success: 160 40% 45%;
+  }
+
+  .theme-elegant {
+    /* Theme 3: Elegant Dark / Luxury (Deep Purple/Gold) */
+    --background: 270 40% 8%;
+    --foreground: 45 40% 95%;
+    --primary: 40 80% 65%; /* Gold */
+    --primary-foreground: 270 50% 10%;
+    --secondary: 270 30% 15%;
+    --secondary-foreground: 45 40% 90%;
+    --card: 270 30% 12%;
+    --card-foreground: 45 40% 95%;
+    --accent: 40 80% 70%;
+    --accent-foreground: 270 50% 10%;
+    --success: 150 40% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-secondary;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-500 ease-in-out;
+  }
+}
+
+/* Custom Scrollbar for Elegance */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/40;
+}
+
+/* Glassmorphism utility */
+.glass {
+  @apply bg-card/70 backdrop-blur-md border border-white/20 shadow-lg;
+}
+.theme-elegant .glass {
+  @apply bg-card/60 border-white/5 shadow-2xl;
+}
