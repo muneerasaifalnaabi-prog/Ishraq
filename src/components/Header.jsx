@@ -1,23 +1,30 @@
 import React from 'react';
-import { Bell, Search, Sun, Moon, Palette } from 'lucide-react';
+import { Bell, Search, Sun, Moon, Palette, Menu } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Header = () => {
-  const { t, theme, setTheme, language, setLanguage } = useAppContext();
+  const { t, theme, language, updateProfile, setIsMobileMenuOpen } = useAppContext();
 
   const handleThemeChange = () => {
-    if (theme === 'vibrant') setTheme('calm');
-    else if (theme === 'calm') setTheme('elegant');
-    else setTheme('vibrant');
+    const next = theme === 'vibrant' ? 'calm' : theme === 'calm' ? 'elegant' : 'vibrant';
+    updateProfile({ theme: next });
   };
 
   const currentThemeIcon = theme === 'vibrant' ? <Palette className="w-5 h-5 text-pink-500" /> : theme === 'calm' ? <Sun className="w-5 h-5 text-teal-600" /> : <Moon className="w-5 h-5 text-yellow-400" />;
 
   return (
     <header className="flex flex-col md:flex-row md:items-center justify-between py-4 mb-4 gap-4">
-      <div>
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-1">{t('hello')}</h1>
-        <p className="text-sm text-foreground/60 font-medium">{t('quote')}</p>
+      <div className="flex items-center justify-between w-full md:w-auto">
+        <div>
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-1">{t('hello')}</h1>
+          <p className="text-sm text-foreground/60 font-medium">{t('quote')}</p>
+        </div>
+        <button 
+          onClick={() => setIsMobileMenuOpen(prev => !prev)}
+          className="lg:hidden p-3 bg-secondary/50 hover:bg-primary/10 rounded-2xl transition-colors border border-secondary text-primary"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
       </div>
 
       <div className="flex items-center gap-4">
@@ -42,7 +49,7 @@ const Header = () => {
         
         {/* Language Toggler */}
         <button 
-          onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')} 
+          onClick={() => updateProfile({ language: language === 'ar' ? 'en' : 'ar' })} 
           className="px-4 py-2 bg-secondary/50 hover:bg-primary/10 rounded-full text-sm font-semibold transition-colors shadow-sm border border-secondary disabled:opacity-50"
         >
           {language === 'ar' ? 'EN' : 'عربي'}

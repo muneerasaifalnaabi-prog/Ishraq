@@ -13,32 +13,40 @@ import Challenges from './pages/Challenges';
 import Journal from './pages/Journal';
 import VisionBoard from './pages/VisionBoard';
 import Settings from './pages/Settings';
+import Notification from './components/Notification';
 import { useAppContext } from './context/AppContext';
 
 function App() {
-  const { language } = useAppContext();
+  const { language, isMobileMenuOpen, setIsMobileMenuOpen } = useAppContext();
 
   return (
     <Router>
-      <div className={`flex h-screen overflow-hidden ${language === 'ar' ? 'flex-row-reverse text-right' : 'text-left'}`}>
+      <Notification />
+      <div className={`flex h-screen overflow-hidden ${language === 'ar' ? 'text-right' : 'text-left'} transition-all duration-300 relative`}>
+        {/* Mobile Backdrop */}
+        {isMobileMenuOpen ? (
+          <div 
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[45] lg:hidden animate-in fade-in"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        ) : null}
+
         <Sidebar />
-        <div className="flex-1 flex flex-col pt-4 px-6 pb-6 overflow-hidden">
+        <div className="flex-1 flex flex-col pt-4 px-4 md:px-6 pb-6 overflow-y-auto custom-scrollbar relative h-screen">
           <Header />
-          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar pb-10">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/tasks" element={<Tasks />} />
-              <Route path="/habits" element={<Habits />} />
-              <Route path="/planner" element={<Planner />} />
-              <Route path="/wellness" element={<Wellness />} />
-              <Route path="/mood" element={<Mood />} />
-              <Route path="/insights" element={<Insights />} />
-              <Route path="/challenges" element={<Challenges />} />
-              <Route path="/journal" element={<Journal />} />
-              <Route path="/vision" element={<VisionBoard />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
-          </div>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/habits" element={<Habits />} />
+            <Route path="/planner" element={<Planner />} />
+            <Route path="/wellness" element={<Wellness />} />
+            <Route path="/mood" element={<Mood />} />
+            <Route path="/insights" element={<Insights />} />
+            <Route path="/challenges" element={<Challenges />} />
+            <Route path="/journal" element={<Journal />} />
+            <Route path="/vision" element={<VisionBoard />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
         </div>
       </div>
     </Router>

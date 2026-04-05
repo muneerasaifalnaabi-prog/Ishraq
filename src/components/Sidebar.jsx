@@ -1,10 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, CheckSquare, Activity, Calendar, Heart, SmilePlus, Settings, Sparkles, TrendingUp, Trophy, PenLine, LayoutGrid } from 'lucide-react';
+import { Home, CheckSquare, Activity, Calendar, Heart, SmilePlus, Settings, Sparkles, TrendingUp, Trophy, PenLine, LayoutGrid, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Sidebar = () => {
-  const { t, language } = useAppContext();
+  const { t, language, isMobileMenuOpen, setIsMobileMenuOpen } = useAppContext();
 
   const navItems = [
     { name: t('overview'), icon: Home, path: '/' },
@@ -21,11 +21,22 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className={`glass w-64 h-[calc(100vh-2rem)] rounded-3xl m-4 p-6 flex flex-col justify-between hidden lg:flex ${language==='ar' ? 'mr-4 ml-0' : 'ml-4 mr-0'}`}>
+    <div className={`glass fixed lg:relative z-50 w-64 h-[calc(100vh-2rem)] rounded-3xl m-4 p-6 flex flex-col justify-between transition-all duration-300 shadow-2xl
+      ${language==='ar' ? 'mr-4 ml-0 right-0' : 'ml-4 mr-0 left-0'} 
+      ${isMobileMenuOpen ? 'translate-x-0' : (language === 'ar' ? 'translate-x-[calc(100%+2rem)]' : 'translate-x-[calc(-100%-2rem)]')}
+      lg:translate-x-0 lg:flex`}>
       <div className="overflow-y-auto pr-2 custom-scrollbar">
-        <div className="flex items-center gap-3 mb-10 text-primary font-bold text-2xl tracking-wide">
-          <Sparkles className="w-8 h-8" strokeWidth={1.5} />
-          <span>Ishraq ✨</span>
+        <div className="flex items-center justify-between mb-10 text-primary font-bold text-2xl tracking-wide">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-8 h-8" strokeWidth={1.5} />
+            <span>Ishraq ✨</span>
+          </div>
+          <button 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="lg:hidden p-2 hover:bg-secondary/80 rounded-xl transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         <div className="space-y-2 pb-6">

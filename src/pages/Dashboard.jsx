@@ -78,7 +78,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full auto-rows-max overflow-y-auto pr-2 pb-10">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-max pr-2 pb-10">
       {/* LEFT COLUMN (Habits & Smart Assistant) */}
       <div className="lg:col-span-2 space-y-6">
         {/* Habit Tracker */}
