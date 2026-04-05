@@ -1,0 +1,58 @@
+name: Lint Commit Messages
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install commitlint
+        run: npm install --no-save @commitlint/cli @commitlint/config-conventional
+
+      - name: Create commitlint config
+        run: |
+          cat > commitlint.config.mjs << 'EOF'
+          export default {
+            extends: ['@commitlint/config-conventional'],
+            rules: {
+              'type-enum': [
+                2,
+                'always',
+                ['fix', 'feat', 'docs', 'style', 'refactor', 'test', 'chore', 'perf', 'revert'],
+              ],
+              'scope-enum': [
+                2,
+                'always',
+                ['web', 'server', 'docker', 'docs', 'ci', 'deps', 'keycloak'],
+              ],
+              'scope-empty': [0, 'never'],
+              'subject-case': [2, 'never', ['sentence-case', 'start-case', 'pascal-case', 'upper-case']],
+            },
+          }
+          EOF
+
+      - name: Lint pushed commits
+        run: |
+          if [ "${{ github.event.before }}" = "0000000000000000000000000000000000000000" ]; then
+            echo "First push detected, linting latest commit only"
+            npx commitlint --last
+          else
+            npx commitlint --from "${{ github.event.before }}" --to "${{ github.sha }}" --verbose
+          fi
