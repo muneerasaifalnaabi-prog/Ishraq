@@ -25,77 +25,101 @@ const Wellness = () => {
   };
 
   const toggleRoutine = (name) => {
-    setCompletedRoutines(prev => 
+    setCompletedRoutines(prev =>
       prev.includes(name) ? prev.filter(r => r !== name) : [...prev, name]
     );
   };
 
   return (
     <div className={`flex-1 w-full flex flex-col relative transition-all duration-1000 ease-out ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-      
-      {/* Background Ambience */}
-      <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-gradient-to-br from-pink-500/10 via-rose-400/5 to-transparent rounded-full blur-[120px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[30rem] h-[30rem] bg-gradient-to-tr from-orange-400/10 to-transparent rounded-full blur-[100px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
 
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 relative z-10 px-2 md:px-6">
+      {/* Ambient glows — unified palette */}
+      <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-[hsl(var(--glow-1))] rounded-full blur-[150px] opacity-25 pointer-events-none animate-[float_10s_ease-in-out_infinite]" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[30vw] h-[30vw] bg-[hsl(var(--glow-2))] rounded-full blur-[120px] opacity-20 pointer-events-none animate-[float_13s_ease-in-out_infinite_reverse]" />
+
+      {/* ── Header ── */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8 relative z-10 px-2 md:px-6">
         <div>
-          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-foreground/90 flex items-center gap-4 mb-3">
+          <h1 className="text-5xl md:text-6xl font-serif tracking-tight text-foreground flex items-center gap-6 mb-4">
             {language === 'ar' ? 'العافية' : 'Wellness'}
-            <Heart className="w-8 h-8 text-pink-500 fill-pink-500/20 animate-pulse" />
-          </h2>
-          <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-foreground/40 font-bold ml-1">
-             {language === 'ar' ? 'الصحة الجسدية والنفسية' : 'Mind & Body Harmony'}
+            <Heart className="w-10 h-10 text-primary fill-primary/20 animate-pulse" />
+          </h1>
+          <p className="text-[11px] md:text-xs uppercase tracking-[0.5em] text-foreground/50 font-bold">
+            {language === 'ar' ? 'الصحة الجسدية والنفسية' : 'Mind & Body Harmony'}
           </p>
         </div>
-        
-        <div className="flex items-center gap-3 bg-white/40 dark:bg-card/40 backdrop-blur-2xl px-5 py-3 rounded-full border border-white/60 shadow-sm">
-           <Zap className="w-5 h-5 text-pink-500 fill-pink-500/50" />
-           <span className="text-[10px] font-bold text-foreground/70 uppercase tracking-widest">{language === 'ar' ? 'نشاط كامل' : 'Full Vitality'}</span>
+
+        <div className="flex items-center gap-3 glass px-6 py-3 rounded-full">
+           <Zap className="w-5 h-5 text-primary fill-primary/40" />
+           <span className="text-[10px] font-bold text-foreground/70 uppercase tracking-[0.3em]">
+             {language === 'ar' ? 'نشاط كامل' : 'Full Vitality'}
+           </span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 p-2 md:p-6">
-        
-        {/* Cycle Tracker & Symptoms (Spans 5 cols) */}
-        <div className="lg:col-span-5 flex flex-col gap-6">
-          <section className="bg-gradient-to-br from-white/70 to-white/30 dark:from-card/70 dark:to-card/30 rounded-[2.5rem] p-8 md:p-10 border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-3xl relative overflow-hidden group transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)] hover:-translate-y-1">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-pink-500/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-pink-500/20 transition-colors duration-700 pointer-events-none"></div>
-            
-            <div className="flex items-center justify-between mb-10 relative z-10">
-              <div className="flex items-center gap-4">
-                <div className="p-4 bg-white/80 dark:bg-card/80 border border-white/50 rounded-2xl shadow-sm">
-                  <Droplets className="w-6 h-6 text-pink-500" />
+      {/* ── Grid ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10 px-2 md:px-6">
+
+        {/* Left: Cycle + Symptoms */}
+        <div className="lg:col-span-5 flex flex-col gap-8">
+
+          {/* Cycle Tracker */}
+          <section className="glass-premium rounded-[2.5rem] p-10 relative overflow-hidden group hover:-translate-y-1 transition-all duration-500">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[hsl(var(--glow-1))] opacity-10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+
+            <div className="flex items-center justify-between mb-12 relative z-10">
+              <div className="flex items-center gap-5">
+                <div className="p-4 bg-secondary border border-secondary rounded-2xl shadow-sm">
+                  <Droplets className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">{language === 'ar' ? 'تتبع الدورة' : 'Cycle Phase'}</span>
-                  <h3 className="text-xl font-serif text-foreground/90 tracking-tight">{language === 'ar' ? 'مرحلة التبويض' : 'Ovulation Phase'}</h3>
+                  <span className="block text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/50 mb-1">
+                    {language === 'ar' ? 'تتبع الدورة' : 'Cycle Phase'}
+                  </span>
+                  <h3 className="text-2xl font-serif text-foreground tracking-tight">
+                    {language === 'ar' ? 'مرحلة التبويض' : 'Ovulation Phase'}
+                  </h3>
                 </div>
               </div>
-              <button className="p-2 bg-white/40 dark:bg-card/40 rounded-full hover:bg-white transition-colors border border-white/40"><Info className="w-4 h-4 text-pink-500" /></button>
+              <button className="p-2.5 bg-secondary rounded-full hover:bg-primary hover:text-primary-foreground transition-colors border border-secondary">
+                <Info className="w-5 h-5 text-primary" />
+              </button>
             </div>
-            
-            <div className="relative z-10 flex flex-col items-center justify-center text-center p-12 bg-white/30 dark:bg-card/30 rounded-[2rem] border border-white/40 shadow-[inset_0_0_20px_rgba(0,0,0,0.02)] mb-8">
-              <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-[0.3em] mb-4">{language === 'ar' ? 'اليوم' : 'Day'}</span>
-              <div className="relative flex items-center justify-center">
-                 <span className="text-8xl font-serif tracking-tighter text-foreground/90 drop-shadow-sm">14</span>
-                 <div className="absolute top-0 right-[-1.5rem] w-4 h-4 bg-pink-500 rounded-full border-2 border-white/80 animate-ping shadow-[0_0_15px_rgba(236,72,153,0.5)]"></div>
-                 <div className="absolute top-0 right-[-1.5rem] w-4 h-4 bg-pink-500 rounded-full border-2 border-white/80 shadow-[0_0_15px_rgba(236,72,153,0.5)]"></div>
+
+            <div className="relative z-10 flex flex-col items-center justify-center text-center p-14 bg-background/40 rounded-[2rem] border border-secondary mb-4">
+              <span className="text-[11px] font-bold text-foreground/50 uppercase tracking-[0.4em] mb-5">
+                {language === 'ar' ? 'اليوم' : 'Day'}
+              </span>
+              <div className="relative flex items-center justify-center mb-6">
+                 <span className="text-9xl font-serif tracking-tighter text-foreground">14</span>
+                 <div className="absolute top-0 right-[-1.5rem] w-4 h-4 bg-primary rounded-full border-2 border-background animate-ping opacity-60" />
+                 <div className="absolute top-0 right-[-1.5rem] w-4 h-4 bg-primary rounded-full border-2 border-background shadow-[0_0_15px_rgba(0,0,0,0.2)]" />
               </div>
-              <p className="mt-8 text-xs font-medium text-foreground/60 max-w-[80%] leading-relaxed">
-                 {language === 'ar' ? 'طاقة مرتفعة ومزاج إيجابي. وقت مثالي للتركيز على المهام الصعبة.' : 'Peak energy and positive mood. Ideal time for complex tasks.'}
+              <p className="text-sm font-medium text-foreground/60 max-w-[75%] leading-relaxed">
+                 {language === 'ar' ? 'طاقة مرتفعة ومزاج إيجابي. وقت مثالي للتركيز على المهام الصعبة.' : 'Peak energy & positive mood. Ideal time for complex, demanding tasks.'}
               </p>
             </div>
           </section>
 
-          <section className="bg-gradient-to-br from-white/70 to-white/30 dark:from-card/70 dark:to-card/30 rounded-[2.5rem] p-8 border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-3xl transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)] hover:-translate-y-1">
-             <div className="flex justify-between items-center mb-6">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">{language === 'ar' ? 'الأعراض المسجلة' : 'Logged Symptoms'}</span>
-                <button onClick={() => setIsLogging(true)} className="w-8 h-8 rounded-full bg-pink-500/10 flex items-center justify-center text-pink-500 hover:bg-pink-500 hover:text-white transition-all"><Plus className="w-4 h-4"/></button>
+          {/* Logged Symptoms */}
+          <section className="glass-premium rounded-[2.5rem] p-8 hover:-translate-y-1 transition-all duration-500">
+             <div className="flex justify-between items-center mb-8">
+                <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-foreground/60">
+                  {language === 'ar' ? 'الأعراض المسجلة' : 'Logged Symptoms'}
+                </span>
+                <button
+                  onClick={() => setIsLogging(true)}
+                  className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary hover:text-primary-foreground transition-all duration-300 border border-primary/20">
+                  <Plus className="w-5 h-5"/>
+                </button>
              </div>
-             <div className="flex flex-wrap gap-2">
+             <div className="flex flex-wrap gap-3">
                 {symptoms.map((s, i) => (
-                  <span key={s.id} className="px-4 py-2.5 bg-white/60 dark:bg-card/60 rounded-xl text-[10px] font-bold text-foreground/70 uppercase tracking-wider border border-white shadow-sm animate-in zoom-in-95" style={{ animationDelay: `${i * 100}ms` }}>
+                  <span
+                    key={s.id}
+                    className="px-5 py-2.5 glass-light rounded-full text-[10px] font-bold text-foreground/80 uppercase tracking-[0.2em] animate-in zoom-in-95"
+                    style={{ animationDelay: `${i * 100}ms` }}
+                  >
                     {s.name}
                   </span>
                 ))}
@@ -103,21 +127,25 @@ const Wellness = () => {
           </section>
         </div>
 
-        {/* Self Care Rituals (Spans 7 cols) */}
-        <div className="lg:col-span-7 bg-gradient-to-br from-white/70 to-white/30 dark:from-card/70 dark:to-card/30 rounded-[2.5rem] p-8 md:p-12 border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] backdrop-blur-3xl flex flex-col relative overflow-hidden group transition-all duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)] hover:-translate-y-1">
-          <div className="absolute bottom-[-10%] right-[-10%] w-[30rem] h-[30rem] bg-primary/5 rounded-full blur-[100px] group-hover:bg-primary/10 transition-colors duration-1000 pointer-events-none"></div>
-          
-          <div className="flex items-center gap-4 mb-12 relative z-10">
-            <div className="p-4 bg-white/80 dark:bg-card/80 border border-white/50 rounded-2xl shadow-sm">
+        {/* Right: Self-Care Rituals */}
+        <div className="lg:col-span-7 glass-premium rounded-[2.5rem] p-10 md:p-12 flex flex-col relative overflow-hidden group hover:-translate-y-1 transition-all duration-500">
+          <div className="absolute bottom-[-10%] right-[-10%] w-[30vw] h-[30vw] bg-[hsl(var(--glow-2))] opacity-10 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="flex items-center gap-5 mb-14 relative z-10">
+            <div className="p-4 bg-secondary border border-secondary rounded-2xl shadow-sm">
               <Sparkles className="w-6 h-6 text-primary" />
             </div>
             <div>
-               <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">{language === 'ar' ? 'الروتين اليومي' : 'Daily Routine'}</span>
-               <h3 className="text-2xl font-serif text-foreground/90 tracking-tight">{language === 'ar' ? 'العناية بالذات' : 'Self-Care Rituals'}</h3>
+               <span className="block text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/50 mb-1">
+                 {language === 'ar' ? 'الروتين اليومي' : 'Daily Routine'}
+               </span>
+               <h3 className="text-3xl font-serif text-foreground tracking-tight">
+                 {language === 'ar' ? 'العناية بالذات' : 'Self-Care Rituals'}
+               </h3>
             </div>
           </div>
 
-          <div className="space-y-4 flex-1 relative z-10">
+          <div className="space-y-5 flex-1 relative z-10">
              {[
                { name: 'Morning Routine ☀️', ar: 'روتين الصباح ☀️', steps: 4 },
                { name: 'Evening Routine 🌙', ar: 'روتين المساء 🌙', steps: 5 },
@@ -125,53 +153,63 @@ const Wellness = () => {
              ].map((r, i) => {
                const isDone = completedRoutines.includes(r.name);
                return (
-                 <div 
-                   key={i} 
+                 <div
+                   key={i}
                    onClick={() => toggleRoutine(r.name)}
-                   className={`p-6 rounded-[1.5rem] border transition-all duration-500 cursor-pointer flex justify-between items-center group/item
-                      ${isDone 
-                        ? 'bg-emerald-500/5 border-emerald-500/20' 
-                        : 'bg-white/40 dark:bg-card/40 border-white hover:border-primary/30 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)]'}`}
+                   className={`p-7 rounded-[2rem] border transition-all duration-500 cursor-pointer flex justify-between items-center group/item
+                      ${isDone
+                        ? 'bg-foreground/5 border-foreground/10'
+                        : 'bg-background/50 border-secondary hover:border-primary/20 shadow-sm hover:shadow-lg hover:-translate-y-1'}`}
                  >
-                   <div className="flex flex-col gap-1.5">
-                      <span className={`font-serif text-xl tracking-tight transition-all duration-500 ${isDone ? 'text-emerald-700/60 dark:text-emerald-400/60 line-through italic' : 'text-foreground/80 group-hover/item:text-foreground'}`}>
+                   <div className="flex flex-col gap-2">
+                      <span className={`font-serif text-2xl tracking-tight transition-all duration-500 ${isDone ? 'text-foreground/40 line-through italic' : 'text-foreground group-hover/item:text-foreground'}`}>
                           {language === 'ar' ? r.ar : r.name}
                       </span>
-                      <span className={`text-[9px] font-bold uppercase tracking-[0.2em] ${isDone ? 'text-emerald-700/40' : 'text-foreground/30'}`}>{r.steps} {language === 'ar' ? 'خطوات' : 'steps'}</span>
+                      <span className={`text-[10px] font-bold uppercase tracking-[0.3em] ${isDone ? 'text-foreground/30' : 'text-foreground/50'}`}>
+                        {r.steps} {language === 'ar' ? 'خطوات' : 'steps'}
+                      </span>
                    </div>
-                   <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isDone ? 'bg-emerald-500 text-white scale-110 shadow-[0_0_20px_rgba(16,185,129,0.3)]' : 'bg-white border border-white shadow-sm text-primary/30 group-hover/item:text-primary group-hover/item:border-primary/20 group-hover/item:scale-110'}`}>
-                      <CheckCircle2 className={`w-6 h-6 transition-all duration-500 ${isDone ? 'stroke-[3px]' : 'stroke-[2px]'}`} />
+                   <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 ${isDone ? 'bg-primary text-primary-foreground scale-110 shadow-[0_8px_24px_rgba(0,0,0,0.15)]' : 'bg-secondary border border-secondary text-foreground/30 group-hover/item:text-primary group-hover/item:border-primary/20 group-hover/item:scale-110'}`}>
+                      <CheckCircle2 className={`w-7 h-7 transition-all ${isDone ? 'stroke-[2.5px]' : 'stroke-[1.5px]'}`} />
                    </div>
                  </div>
-               )
+               );
              })}
 
-             <div className="mt-8 bg-[#0f172a] rounded-[2rem] p-8 border border-white/10 flex flex-col justify-center items-center cursor-pointer relative overflow-hidden group/card shadow-2xl">
-                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
-                <div className="absolute w-64 h-64 bg-primary/30 rounded-full blur-[80px] group-hover/card:bg-primary/50 transition-colors duration-1000 pointer-events-none"></div>
-                
-                <CalendarHeart className="w-10 h-10 text-white/90 mb-6 relative z-10 group-hover/card:scale-110 transition-transform duration-500" />
-                <span className="font-serif text-2xl text-white tracking-tight relative z-10 mb-3 text-center">{language === 'ar' ? 'تحدي حب الذات - يوم ١٢' : '30-Day Self-Love - Day 12'}</span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 relative z-10 text-center">Complete today's challenge to build your streak</span>
+             {/* 30-Day Challenge — bold inverted card */}
+             <div className="mt-4 bg-foreground rounded-[2rem] p-10 flex flex-col justify-center items-center cursor-pointer relative overflow-hidden group/card shadow-[0_24px_64px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all duration-500">
+                <div className="absolute w-64 h-64 bg-primary/20 rounded-full blur-[80px] group-hover/card:bg-primary/40 transition-colors duration-1000 pointer-events-none" />
+                <CalendarHeart className="w-12 h-12 text-background/90 mb-6 relative z-10 group-hover/card:scale-110 transition-transform duration-500" />
+                <span className="font-serif text-3xl text-background tracking-tight relative z-10 mb-3 text-center">
+                  {language === 'ar' ? 'تحدي حب الذات — يوم ١٢' : '30-Day Self-Love — Day 12'}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-background/50 relative z-10 text-center">
+                  {language === 'ar' ? 'أكملي تحدي اليوم لبناء سلسلتك' : 'Complete today's challenge to build your streak'}
+                </span>
              </div>
           </div>
         </div>
       </div>
 
-      {/* Elegant Overlay */}
+      {/* ── Log Symptom Modal ── */}
       {isLogging && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-2xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-500">
-           <div className="bg-gradient-to-br from-white/90 to-white/60 dark:from-card/90 dark:to-card/60 w-full max-w-lg rounded-[3rem] p-12 shadow-[0_32px_64px_rgba(0,0,0,0.1)] border border-white/60 relative animate-in zoom-in-95 duration-500">
-              <button 
+        <div className="fixed inset-0 bg-background/60 backdrop-blur-3xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-500">
+           <div className="glass-premium w-full max-w-xl rounded-[3rem] p-14 shadow-[0_40px_80px_rgba(0,0,0,0.15)] relative animate-in zoom-in-95 duration-500">
+              <button
                 onClick={() => setIsLogging(false)}
-                className="absolute top-8 right-8 p-3 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors"
-                ><X className="w-5 h-5 text-foreground/50 hover:text-foreground"/></button>
-              
+                className="absolute top-10 right-10 p-4 hover:bg-secondary rounded-full transition-colors group">
+                <X className="w-6 h-6 text-foreground/50 group-hover:text-foreground transition-colors"/>
+              </button>
+
               <div className="text-center mb-12">
-                <span className="block text-[10px] font-bold uppercase tracking-[0.3em] text-pink-500 mb-4">{language === 'ar' ? 'تسجيل جديد' : 'New Log'}</span>
-                <h3 className="text-4xl font-serif tracking-tight text-foreground/90">{language === 'ar' ? 'كيف تشعرين؟' : 'How are you feeling?'}</h3>
+                <span className="block text-[11px] font-bold uppercase tracking-[0.4em] text-primary mb-5">
+                  {language === 'ar' ? 'تسجيل جديد' : 'New Log'}
+                </span>
+                <h3 className="text-5xl font-serif tracking-tight text-foreground">
+                  {language === 'ar' ? 'كيف تشعرين؟' : 'How are you feeling?'}
+                </h3>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                  {[
                    { name: 'Happy 😊', ar: 'سعيدة 😊' },
@@ -181,10 +219,10 @@ const Wellness = () => {
                    { name: 'Moody 🎭', ar: 'متقلبة 🎭' },
                    { name: 'Calm 🧘‍♀️', ar: 'هادئة 🧘‍♀️' }
                  ].map((s, i) => (
-                   <button 
+                   <button
                      key={i}
                      onClick={() => logSymptom(language === 'ar' ? s.ar : s.name)}
-                     className="p-6 bg-white/60 dark:bg-black/20 border border-white/60 dark:border-white/5 rounded-[1.5rem] font-serif text-lg text-foreground/70 hover:bg-pink-500 hover:text-white hover:border-pink-500 hover:scale-105 hover:shadow-[0_8px_30px_rgba(236,72,153,0.3)] transition-all duration-300"
+                     className="p-7 bg-background/50 border border-secondary rounded-[1.5rem] font-serif text-xl text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] transition-all duration-300"
                    >
                      {language === 'ar' ? s.ar : s.name}
                    </button>
