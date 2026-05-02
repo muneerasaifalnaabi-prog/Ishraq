@@ -28,7 +28,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'Cairo', 'sans-serif'], // Cairo for beautiful Arabic
+        sans: ['Outfit', '"IBM Plex Sans Arabic"', 'sans-serif'],
+        serif: ['"Playfair Display"', 'Amiri', 'serif'],
       },
       animation: {
         'float': 'float 3s ease-in-out infinite',

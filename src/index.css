@@ -1,4 +1,29 @@
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;600;800&family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/src/assets/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/src/assets/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/src/assets/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/src/assets/IBM_Plex_Sans_Arabic/IBMPlexSansArabic-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
 
 @tailwind base;
 @tailwind components;
@@ -6,48 +31,57 @@
 
 @layer base {
   :root {
-    /* Theme 1: Girly/Vibrant (Soft Pink/Rose Gold) */
-    --background: 340 100% 98%;
-    --foreground: 340 50% 15%;
-    --primary: 340 82% 62%;
+    /* 1. Background (Warm Pearl - Calm/Clarity) 
+       2. Foreground (Dark Sepia - Grounding/Focus)
+       3. Primary (Soft Rose - Warmth/Motivation) */
+    --background: 30 20% 98%;
+    --foreground: 30 40% 15%;
+    
+    --primary: 340 45% 65%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 340 60% 94%;
-    --secondary-foreground: 340 50% 30%;
+    
+    --secondary: 30 15% 94%;
+    --secondary-foreground: 30 40% 25%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 340 50% 15%;
-    --accent: 340 82% 80%;
-    --accent-foreground: 340 50% 20%;
-    --success: 150 60% 50%;
-  }
-
-  .theme-calm {
-    /* Theme 2: Calm / Pastel (Mint/Lavender) */
-    --background: 160 30% 98%;
-    --foreground: 160 50% 20%;
-    --primary: 160 40% 45%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 160 30% 92%;
-    --secondary-foreground: 160 50% 30%;
-    --card: 0 0% 100%;
-    --card-foreground: 160 50% 20%;
-    --accent: 250 40% 75%;
-    --accent-foreground: 250 50% 20%;
-    --success: 160 40% 45%;
-  }
-
-  .theme-elegant {
-    /* Theme 3: Elegant Dark / Luxury (Deep Purple/Gold) */
-    --background: 270 40% 8%;
-    --foreground: 45 40% 95%;
-    --primary: 40 80% 65%; /* Gold */
-    --primary-foreground: 270 50% 10%;
-    --secondary: 270 30% 15%;
-    --secondary-foreground: 45 40% 90%;
-    --card: 270 30% 12%;
-    --card-foreground: 45 40% 95%;
-    --accent: 40 80% 70%;
-    --accent-foreground: 270 50% 10%;
+    --card-foreground: 30 40% 15%;
+    
+    --accent: 340 45% 65%; /* Unified with primary */
+    --accent-foreground: 0 0% 100%;
+    
     --success: 150 40% 50%;
+    
+    /* Very subtle harmonious glows */
+    --glow-1: 340 30% 90%;
+    --glow-2: 30 30% 92%;
+    --glow-3: 340 20% 95%;
+  }
+
+  .dark {
+    /* 1. Background (Deep Obsidian - Rest/Introspection) 
+       2. Foreground (Soft Cloud - Gentle contrast)
+       3. Primary (Muted Lavender - Serenity/Deep Work) */
+    --background: 240 10% 6%;
+    --foreground: 240 20% 90%;
+    
+    --primary: 260 40% 70%; 
+    --primary-foreground: 240 10% 6%;
+    
+    --secondary: 240 10% 12%;
+    --secondary-foreground: 240 15% 80%;
+    
+    --card: 240 10% 8%;
+    --card-foreground: 240 20% 90%;
+    
+    --accent: 260 40% 70%; /* Unified with primary */
+    --accent-foreground: 240 10% 6%;
+    
+    --success: 150 40% 50%;
+
+    /* Very subtle harmonious glows */
+    --glow-1: 260 20% 15%;
+    --glow-2: 240 15% 10%;
+    --glow-3: 260 10% 12%;
   }
 }
 
@@ -55,96 +89,84 @@
   * {
     @apply border-secondary;
   }
+  
   body {
-    @apply bg-background text-foreground transition-colors duration-500 ease-in-out;
+    @apply bg-background text-foreground transition-colors duration-1000 ease-out;
+    font-family: 'Outfit', 'IBM Plex Sans Arabic', 'IBM Plex Sans', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6, .font-serif {
+    font-family: 'Playfair Display', 'Amiri', 'IBM Plex Sans', serif;
   }
 }
 
-/* ─── Custom Scrollbar ─────────────────────────────── */
+/* ─── Ultra-Premium Scrollbar ─────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary/20 rounded-full;
+  @apply bg-foreground/10 rounded-full border border-white/10;
 }
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-primary/40;
 }
 
-/* ─── Glassmorphism Utilities ──────────────────────── */
+/* ─── Impeccable Glassmorphism ──────────────────────── */
 .glass {
-  @apply bg-card/70 backdrop-blur-md border border-white/20 shadow-lg;
-}
-.theme-elegant .glass {
-  @apply bg-card/60 border-white/5 shadow-2xl;
+  @apply bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-white/60 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)];
 }
 
-/* Premium glass — used in Notification component */
 .glass-premium {
-  @apply bg-white/90 backdrop-blur-2xl border border-white/60 shadow-2xl;
-}
-.theme-elegant .glass-premium {
-  @apply bg-card/85 border-white/10;
+  @apply bg-gradient-to-br from-white/80 via-white/50 to-white/30 dark:from-white/10 dark:via-white/5 dark:to-transparent backdrop-blur-3xl border border-white/80 dark:border-white/20 shadow-[0_16px_48px_rgba(33,15,25,0.15)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.6)];
 }
 
-/* Lighter glass — used in Habits list cards */
 .glass-light {
-  @apply bg-white/50 backdrop-blur-sm border border-white/30 shadow-md;
-}
-.theme-elegant .glass-light {
-  @apply bg-card/30 border-white/5;
+  @apply bg-white/30 dark:bg-white/5 backdrop-blur-md border border-white/50 dark:border-white/10 shadow-sm;
 }
 
-/* Glossy shine overlay — used on vision board tiles & charts */
+/* Glossy reflection */
 .glass-shine {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0) 60%
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0) 100%
   );
+  mix-blend-mode: overlay;
 }
 
-/* ─── Animation System (replaces tailwindcss-animate) ─ */
+/* Generative Grain/Noise */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.2;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+.dark .noise-overlay {
+  opacity: 0.05;
+}
+
+/* ─── Cinematic Animations ─────────────────────────────── */
 @layer utilities {
-  /* Base animate-in */
   .animate-in {
     animation-fill-mode: both;
-    animation-duration: 300ms;
+    animation-duration: 800ms;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* Fade variants */
-  .fade-in {
-    animation-name: fadeIn;
-  }
-  .fade-out {
-    animation-name: fadeOut;
-  }
-
-  /* Zoom variants */
-  .zoom-in-50 {
-    animation-name: zoomIn50;
-  }
-  .zoom-in-95 {
-    animation-name: zoomIn95;
-  }
-
-  /* Slide variants */
-  .slide-in-from-bottom-4 {
-    animation-name: slideInBottom4;
-  }
-  .slide-in-from-top-2 {
-    animation-name: slideInTop2;
-  }
-
-  /* Duration helpers */
-  .duration-200 { animation-duration: 200ms; }
-  .duration-300 { animation-duration: 300ms; }
-  .duration-500 { animation-duration: 500ms; }
+  .fade-in { animation-name: fadeIn; }
+  .zoom-in-95 { animation-name: zoomIn95; }
+  .slide-in-from-bottom-8 { animation-name: slideInBottom8; }
 }
 
 @keyframes fadeIn {
@@ -152,27 +174,12 @@
   to   { opacity: 1; }
 }
 
-@keyframes fadeOut {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-@keyframes zoomIn50 {
-  from { opacity: 0; transform: scale(0.5); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
 @keyframes zoomIn95 {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.98); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-@keyframes slideInBottom4 {
-  from { opacity: 0; transform: translateY(1rem); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideInTop2 {
-  from { opacity: 0; transform: translateY(-0.5rem); }
+@keyframes slideInBottom8 {
+  from { opacity: 0; transform: translateY(2rem); }
   to   { opacity: 1; transform: translateY(0); }
 }

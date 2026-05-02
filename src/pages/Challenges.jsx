@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Target, Trophy, Users, Timer, Sparkles, CheckCircle2, ArrowUpRight, Plus } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Challenges = () => {
   const { t, language } = useAppContext();
+  const [animateIn, setAnimateIn] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimateIn(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [activeChallenges, setActiveChallenges] = useState([
     { 
@@ -15,7 +21,9 @@ const Challenges = () => {
       progress: 65, 
       joined: true,
       category: language === 'ar' ? 'صحة' : 'Health',
-      color: 'from-blue-400 to-blue-600' 
+      color: 'from-blue-400/20 to-blue-600/60',
+      glow: 'bg-blue-500/20',
+      textAccent: 'text-blue-500'
     },
     { 
       id: 2, 
@@ -26,7 +34,9 @@ const Challenges = () => {
       progress: 0, 
       joined: false,
       category: language === 'ar' ? 'عقل' : 'Mind',
-      color: 'from-purple-400 to-purple-600' 
+      color: 'from-purple-400/20 to-purple-600/60',
+      glow: 'bg-purple-500/20',
+      textAccent: 'text-purple-500'
     }
   ]);
 
@@ -38,95 +48,147 @@ const Challenges = () => {
     ? ['الكل', 'صحة', 'عقل', 'روتين'] 
     : ['All', 'Health', 'Mind', 'Routine'];
 
+  const [activeCategory, setActiveCategory] = useState(0);
+
   return (
-    <div className="flex-1 glass rounded-[2rem] p-6 md:p-10 flex flex-col relative">
-      <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+    <div className={`flex-1 w-full flex flex-col relative transition-all duration-1000 ease-out ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-12 gap-6 relative">
-        <h2 className="text-2xl md:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary flex items-center gap-4">
-          <Target className="w-9 h-9 text-primary" /> {t('challenges')}
-        </h2>
-        <div className="flex bg-secondary/50 p-1.5 rounded-2xl border border-secondary shadow-sm">
-           {categories.map((cat, i) => (
-             <button key={i} className={`px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${i===0 ? 'bg-white text-primary shadow-md scale-105':'text-foreground/30 hover:text-foreground'}`}>
-               {cat}
-             </button>
-           ))}
+      {/* Background Ambience */}
+      <div className="absolute top-[0%] right-[-5%] w-[40rem] h-[40rem] bg-gradient-to-br from-primary/10 via-blue-400/5 to-transparent rounded-full blur-[120px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[35rem] h-[35rem] bg-gradient-to-tr from-purple-400/10 to-transparent rounded-full blur-[100px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
+
+      {/* Elegant Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 relative z-10 px-2 md:px-6">
+        <div>
+          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-foreground/90 flex items-center gap-4 mb-3">
+            {language === 'ar' ? 'التحديات' : 'Challenges'}
+            <Target className="w-8 h-8 text-primary opacity-80" />
+          </h2>
+          <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-foreground/40 font-bold ml-1">
+             {language === 'ar' ? 'ارتقِ بمستوى حياتك' : 'Elevate your lifestyle'}
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-4 bg-white/40 dark:bg-card/40 backdrop-blur-2xl p-2.5 rounded-full border border-white/60 shadow-sm overflow-x-auto max-w-full custom-scrollbar">
+           <div className="flex bg-white/60 dark:bg-black/20 p-1.5 rounded-full relative">
+             {categories.map((cat, i) => (
+               <button 
+                 key={i} 
+                 onClick={() => setActiveCategory(i)}
+                 className={`px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all duration-500 z-10 whitespace-nowrap ${activeCategory === i ? 'text-primary' : 'text-foreground/40 hover:text-foreground/70'}`}
+               >
+                 {cat}
+               </button>
+             ))}
+             {/* Dynamic Slider (simplified logic for demo) */}
+             <div 
+               className="absolute top-1.5 bottom-1.5 bg-white dark:bg-card shadow-sm rounded-full transition-transform duration-500 border border-black/5" 
+               style={{ 
+                 width: `${100 / categories.length}%`, 
+                 transform: `translateX(${activeCategory * 100}%)` 
+               }} 
+             />
+           </div>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-10">
-        {activeChallenges.map((challenge) => (
-          <div key={challenge.id} className="bg-white/40 dark:bg-card/40 p-8 rounded-[3rem] border border-white shadow-2xl backdrop-blur-3xl relative overflow-hidden group hover:translate-y-[-8px] transition-all duration-500 ring-1 ring-black/[0.01]">
-            <div className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b ${challenge.color}`}></div>
-            <div className="flex justify-between items-start mb-8 pl-4 rtl:pl-0 rtl:pr-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 relative z-10 px-2 md:px-6 mb-10">
+        {activeChallenges.map((challenge, index) => (
+          <div 
+            key={challenge.id} 
+            className="bg-gradient-to-br from-white/80 to-white/40 dark:from-card/80 dark:to-card/40 p-8 md:p-10 rounded-[2.5rem] border border-white/80 shadow-[0_16px_48px_rgba(0,0,0,0.06)] backdrop-blur-3xl relative overflow-hidden group hover:shadow-[0_24px_64px_rgba(0,0,0,0.1)] hover:-translate-y-2 transition-all duration-700 animate-in slide-in-from-bottom-4"
+            style={{ animationDelay: `${index * 150}ms` }}
+          >
+            {/* Ambient Card Glow */}
+            <div className={`absolute -right-20 -top-20 w-64 h-64 ${challenge.glow} rounded-full blur-[80px] group-hover:scale-125 transition-transform duration-1000 pointer-events-none`}></div>
+            
+            <div className="flex justify-between items-start mb-10 relative z-10">
                <div>
-                  <span className="text-[10px] font-black text-primary/40 uppercase tracking-[0.3em] mb-2 block">{challenge.category}</span>
-                  <h3 className="text-2xl font-black text-foreground/80 tracking-tight leading-tight">{language === 'ar' ? challenge.name : challenge.enName}</h3>
+                  <span className={`text-[9px] font-bold uppercase tracking-[0.4em] ${challenge.textAccent} mb-3 block`}>{challenge.category}</span>
+                  <h3 className="text-3xl font-serif text-foreground/90 tracking-tight leading-tight">{language === 'ar' ? challenge.name : challenge.enName}</h3>
                </div>
-               <div className="flex items-center gap-2 bg-secondary/50 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest text-foreground/40 shadow-sm">
-                  <Timer className="w-4 h-4 text-primary/40" /> {challenge.time}
+               <div className="flex items-center gap-2 bg-white/60 dark:bg-black/20 px-4 py-2.5 rounded-full border border-white/50 shadow-sm backdrop-blur-md">
+                  <Timer className={`w-4 h-4 ${challenge.textAccent}`} />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/70">{challenge.time}</span>
                </div>
             </div>
 
-            <div className="space-y-6 px-4 rtl:px-0 rtl:pr-4 mb-10">
-               <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-foreground/30">
-                  <span className="flex items-center gap-2">
+            <div className="space-y-6 mb-12 relative z-10">
+               <div className="flex justify-between items-center px-1">
+                  <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">
                     <Users className="w-4 h-4" /> {challenge.participants} {language === 'ar' ? 'مشاركة' : 'Joined'}
                   </span>
-                  <span>{challenge.progress}% Complete</span>
+                  <span className={`text-[10px] font-bold uppercase tracking-[0.2em] ${challenge.textAccent}`}>{challenge.progress}% {language === 'ar' ? 'مكتمل' : 'Complete'}</span>
                </div>
-               <div className="w-full bg-secondary/30 h-3 rounded-full overflow-hidden shadow-inner flex relative">
-                  <div className={`h-full bg-gradient-to-r ${challenge.color} rounded-full transition-all duration-[1.5s] delay-300 relative z-10`} style={{ width: `${challenge.progress}%` }}></div>
-                  <div className="absolute inset-0 bg-white/5 opacity-50 glass-shine"></div>
+               
+               {/* Elegant Progress Bar */}
+               <div className="w-full bg-black/5 dark:bg-white/5 h-4 rounded-full overflow-hidden shadow-[inset_0_2px_10px_rgba(0,0,0,0.05)] relative p-0.5">
+                  <div 
+                    className={`h-full bg-gradient-to-r ${challenge.color} rounded-full transition-all duration-[1.5s] ease-out relative z-10`} 
+                    style={{ width: `${challenge.progress}%` }}
+                  >
+                     <div className="absolute inset-0 glass-shine opacity-40 rounded-full"></div>
+                  </div>
                </div>
             </div>
 
-            <div className="px-4 rtl:px-0 rtl:pr-4">
+            <div className="relative z-10">
                {challenge.joined ? (
                  <div className="flex gap-4">
-                    <button className="flex-1 py-5 bg-emerald-500/10 text-emerald-600 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 border border-emerald-500/10 shadow-sm cursor-default">
-                       <CheckCircle2 className="w-5 h-5 fill-emerald-500 text-white" /> {language === 'ar' ? 'تم الانضمام' : 'Ongoing'}
+                    <button className="flex-1 py-5 bg-emerald-500/10 text-emerald-600 rounded-full font-bold text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 border border-emerald-500/20 shadow-sm backdrop-blur-md cursor-default transition-all">
+                       <CheckCircle2 className="w-5 h-5" strokeWidth={2.5} /> {language === 'ar' ? 'تم الانضمام' : 'Ongoing'}
                     </button>
-                    <button className="p-5 bg-white rounded-2xl text-primary shadow-xl border border-primary/5 hover:scale-110 active:scale-95 transition-all">
-                       <ArrowUpRight className="w-5 h-5" />
+                    <button className="w-16 h-16 bg-white dark:bg-card rounded-full text-foreground/70 shadow-lg border border-white/50 hover:scale-105 hover:text-primary active:scale-95 transition-all flex items-center justify-center group/btn">
+                       <ArrowUpRight className="w-6 h-6 group-hover/btn:rotate-12 transition-transform" />
                     </button>
                  </div>
                ) : (
                  <button 
                    onClick={() => joinChallenge(challenge.id)}
-                   className="w-full py-5 bg-primary text-white rounded-2xl font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all group/btn"
+                   className="w-full py-5 bg-foreground text-background rounded-full font-bold text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-3 shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:bg-primary hover:text-white hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group/join"
                  >
-                   <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" /> {language === 'ar' ? 'انضمي الآن' : 'Join Now'}
+                   <Sparkles className="w-5 h-5 group-hover/join:scale-125 transition-transform duration-500" /> {language === 'ar' ? 'انضمي الآن' : 'Join Challenge'}
                  </button>
                )}
             </div>
-            
-            {/* Background Accent */}
-            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
           </div>
         ))}
 
-        {/* Create Custom Challenge Card */}
-        <div className="bg-gradient-to-br from-primary/5 to-accent/5 p-8 rounded-[3rem] border-2 border-dashed border-primary/20 flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-primary/10 transition-all min-h-[300px]">
-           <div className="w-16 h-16 bg-white rounded-[1.5rem] flex items-center justify-center shadow-xl mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-500">
-              <Plus className="w-8 h-8" strokeWidth={3} />
+        {/* Create Custom Challenge Card - Glassy minimal design */}
+        <div className="bg-gradient-to-br from-white/30 to-white/10 dark:from-card/30 dark:to-card/10 p-8 md:p-10 rounded-[2.5rem] border-[3px] border-dashed border-white/60 dark:border-white/10 shadow-sm flex flex-col items-center justify-center text-center group cursor-pointer hover:bg-white/50 transition-all duration-500 min-h-[350px] backdrop-blur-xl animate-in slide-in-from-bottom-4" style={{ animationDelay: '300ms' }}>
+           <div className="w-20 h-20 bg-white/80 dark:bg-card border border-white/50 rounded-full flex items-center justify-center shadow-lg mb-8 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+              <Plus className="w-8 h-8 text-foreground/50 group-hover:text-white transition-colors" strokeWidth={2.5} />
            </div>
-           <h3 className="text-xl font-black text-primary/70 mb-2 uppercase tracking-widest">{language === 'ar' ? 'خطوة جديدة؟' : 'Custom Challenge'}</h3>
-           <p className="text-[10px] font-black uppercase tracking-widest text-primary/30">{language === 'ar' ? 'اصنعي تحديك الخاص وشاركي أصدقائك' : 'Create & Challenge your Friends'}</p>
+           <h3 className="text-2xl font-serif text-foreground/80 mb-3 tracking-tight">{language === 'ar' ? 'تحدي جديد؟' : 'Custom Challenge'}</h3>
+           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40">{language === 'ar' ? 'اصنعي تحديك الخاص وشاركي أصدقائك' : 'Create & Challenge your Friends'}</p>
         </div>
       </div>
 
-      <div className="mt-16 pt-10 border-t border-primary/5 flex flex-col md:flex-row items-center justify-between gap-6 opacity-40 grayscale group hover:opacity-100 hover:grayscale-0 transition-all">
-         <div className="flex items-center gap-4">
-            <Trophy className="w-10 h-10 text-yellow-500 drop-shadow-lg" />
+      {/* Reward Vault - Cinematic Footer */}
+      <div className="mx-2 md:mx-6 mt-6 p-8 md:p-12 bg-[#0f172a] rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group">
+         <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
+         <div className="absolute left-[-10%] top-[-50%] w-[30rem] h-[30rem] bg-yellow-500/10 rounded-full blur-[80px] pointer-events-none group-hover:bg-yellow-500/20 transition-colors duration-1000"></div>
+         
+         <div className="flex items-center gap-6 relative z-10">
+            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400/20 to-yellow-600/20 rounded-2xl border border-yellow-500/30 flex items-center justify-center backdrop-blur-md shadow-[0_0_30px_rgba(234,179,8,0.2)] group-hover:scale-110 transition-transform duration-700">
+              <Trophy className="w-10 h-10 text-yellow-500" strokeWidth={1.5} />
+            </div>
             <div>
-               <h4 className="font-black text-lg tracking-tight leading-none">{language === 'ar' ? 'صندوق الهدايا' : 'Reward Vault'}</h4>
-               <span className="text-[10px] font-black uppercase tracking-widest">3 Rewards unclaimed</span>
+               <h4 className="font-serif text-3xl tracking-tight text-white/90 mb-2">{language === 'ar' ? 'صندوق الهدايا' : 'Reward Vault'}</h4>
+               <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-yellow-500/70">3 {language === 'ar' ? 'جوائز بانتظارك' : 'Rewards unclaimed'}</span>
             </div>
          </div>
-         <div className="flex gap-3">
-            {[1, 2, 3].map(i => <div key={i} className="w-12 h-12 bg-white rounded-2xl shadow-xl flex items-center justify-center font-black text-primary border border-primary/5">🎁</div>)}
+         
+         <div className="flex gap-4 relative z-10">
+            {[1, 2, 3].map((i, index) => (
+              <div 
+                key={i} 
+                className="w-16 h-16 bg-white/10 hover:bg-white/20 rounded-2xl shadow-xl flex items-center justify-center font-black text-2xl border border-white/20 backdrop-blur-md cursor-pointer hover:-translate-y-2 transition-all duration-300 animate-in zoom-in-95"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                🎁
+              </div>
+            ))}
          </div>
       </div>
     </div>

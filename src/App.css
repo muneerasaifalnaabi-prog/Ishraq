@@ -1,2 +1,52 @@
 /* App.css — Ishraq app-specific overrides */
 /* All global utilities live in index.css — keep this file for component-level overrides only */
+
+/* Premium text selection */
+::selection {
+    background: rgba(var(--primary-rgb, 236, 72, 153), 0.3);
+    color: inherit;
+}
+
+::-moz-selection {
+    background: rgba(var(--primary-rgb, 236, 72, 153), 0.3);
+    color: inherit;
+}
+
+/* Smooth scrolling for the whole app */
+html {
+    scroll-behavior: smooth;
+    /* Hide scrollbar completely to make it feel like a native premium app */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar {
+    display: none;
+}
+
+/* Base custom font antialiasing for maximum sharpness */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Prevent image dragging to keep app-like feel */
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+/* Hide input arrows/spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}

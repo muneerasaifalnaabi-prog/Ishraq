@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
-import { Calendar, Clock, Plus, X, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, Plus, X, Check, ArrowRight } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Planner = () => {
   const { t, language } = useAppContext();
+  const [animateIn, setAnimateIn] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimateIn(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [hours, setHours] = useState([
     { time: '08:00', label: 'صباحاً', enLabel: 'AM', title: 'روتين الصباح 🧴', enTitle: 'Morning Routine 🧴', type: 'selfcare' },
@@ -43,83 +49,105 @@ const Planner = () => {
   };
 
   return (
-    <div className="flex-1 glass rounded-[2rem] p-6 md:p-8 flex flex-col relative">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+    <div className={`flex-1 w-full flex flex-col relative transition-all duration-1000 ease-out ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       
-      <div className="flex justify-between items-center mb-10 relative">
-        <h2 className="text-2xl md:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary flex items-center gap-3">
-          <Calendar className="w-8 h-8 text-primary" /> {t('planner')}
-        </h2>
-        <div className="bg-secondary/40 px-6 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest text-foreground/40">
-           {new Date().toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'long' })}
+      {/* Ambient Orbs */}
+      <div className="absolute top-[0%] left-[20%] w-[40rem] h-[40rem] bg-gradient-to-br from-blue-400/10 via-primary/5 to-transparent rounded-full blur-[120px] pointer-events-none mix-blend-multiply dark:mix-blend-screen" />
+
+      {/* Elegant Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6 relative z-10 px-2 md:px-6">
+        <div>
+          <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-foreground/90 flex items-center gap-4 mb-3">
+            {t('planner')}
+            <Calendar className="w-8 h-8 text-primary opacity-80" />
+          </h2>
+          <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-foreground/40 font-bold ml-1">
+             {language === 'ar' ? 'نظمي وقتك بأناقة' : 'Organize your day elegantly'}
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-3 bg-white/40 dark:bg-card/40 backdrop-blur-2xl px-6 py-3 rounded-full border border-white/60 shadow-sm">
+           <Clock className="w-4 h-4 text-primary" />
+           <span className="text-[10px] font-bold text-foreground/70 uppercase tracking-widest">
+             {new Date().toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+           </span>
         </div>
       </div>
       
-      <div className="flex-1 relative">
-        {/* Timeline Path */}
-        <div className="absolute top-0 bottom-0 left-[4.5rem] w-1 bg-secondary/50 md:left-[5.5rem] rtl:right-[4.5rem] rtl:md:right-[5.5rem] rounded-full"></div>
+      <div className="flex-1 relative px-2 md:px-6 z-10">
         
-        <div className="space-y-8">
-          {hours.map((slot, i) => (
-            <div key={i} className="flex items-start gap-6 relative z-10 group">
-              {/* Time Section */}
-              <div className="w-16 md:w-20 text-right flex flex-col items-end shrink-0 pt-2 transition-transform group-hover:scale-110">
-                <span className="font-black text-lg text-foreground/80 leading-none">{slot.time}</span>
-                <span className="text-[10px] text-foreground/30 font-black uppercase tracking-tighter mt-1">{language === 'ar' ? slot.label : slot.enLabel}</span>
-              </div>
-              
-              {/* Indicator Node */}
-              <div className="relative mt-3 shrink-0">
-                <div className={`w-5 h-5 rounded-full border-4 z-10 relative shadow-sm transition-all duration-500 ${slot.type !== 'empty' ? 'bg-primary border-white scale-110' : 'bg-background border-secondary group-hover:border-primary/40'}`}>
-                   {slot.type !== 'empty' && <div className="absolute inset-0 bg-white/20 rounded-full animate-ping"></div>}
+        <div className="bg-gradient-to-br from-white/70 to-white/30 dark:from-card/70 dark:to-card/30 rounded-[3rem] p-8 md:p-12 border border-white/60 shadow-[0_32px_64px_rgba(0,0,0,0.06)] backdrop-blur-3xl relative overflow-hidden">
+          
+          {/* Internal Timeline Glowing Path */}
+          <div className="absolute top-12 bottom-12 left-[6rem] md:left-[7.5rem] rtl:right-[6rem] rtl:md:right-[7.5rem] w-[2px] bg-gradient-to-b from-primary/5 via-primary/20 to-primary/5 rounded-full z-0 hidden sm:block"></div>
+
+          <div className="space-y-6 md:space-y-8 relative z-10">
+            {hours.map((slot, i) => (
+              <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-4 md:gap-8 relative group animate-in slide-in-from-bottom-4" style={{ animationDelay: `${i * 100}ms` }}>
+                
+                {/* Time Display */}
+                <div className="w-24 md:w-28 text-left sm:text-right rtl:sm:text-left flex flex-row sm:flex-col items-center sm:items-end shrink-0 pt-2 transition-transform duration-500 group-hover:scale-105 gap-2 sm:gap-0">
+                  <span className="font-serif text-2xl md:text-3xl text-foreground/80 tracking-tight">{slot.time}</span>
+                  <span className="text-[10px] text-primary font-bold uppercase tracking-[0.2em] sm:mt-1">{language === 'ar' ? slot.label : slot.enLabel}</span>
+                </div>
+                
+                {/* Glowing Node on Timeline */}
+                <div className="hidden sm:block relative mt-2 shrink-0 z-10">
+                  <div className={`w-3.5 h-3.5 rounded-full border-2 transition-all duration-700 ease-out 
+                    ${slot.type !== 'empty' 
+                      ? 'bg-primary border-white scale-125 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]' 
+                      : 'bg-white dark:bg-black border-foreground/20 group-hover:border-primary/50'}`}>
+                  </div>
+                </div>
+
+                {/* Event Glass Bento Block */}
+                <div className="flex-1 w-full">
+                  {editingIndex === i ? (
+                    <div className="flex gap-3 bg-white/90 dark:bg-card/90 p-3 rounded-[2rem] border border-primary shadow-[0_16px_48px_rgba(var(--primary-rgb),0.15)] backdrop-blur-3xl animate-in zoom-in-95">
+                      <input 
+                        autoFocus
+                        type="text" 
+                        value={tempTitle}
+                        onChange={(e) => setTempTitle(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && saveEvent(i)}
+                        placeholder={language === 'ar' ? 'اكتب الموعد هنا...' : 'Type event name...'}
+                        className="flex-1 bg-transparent px-6 py-3 border-0 outline-none font-serif text-xl placeholder:text-foreground/30 text-foreground"
+                      />
+                      <button onClick={() => saveEvent(i)} className="bg-primary text-white p-4 rounded-[1.5rem] hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all shadow-md"><Check className="w-5 h-5"/></button>
+                      <button onClick={() => setEditingIndex(null)} className="bg-secondary/50 p-4 rounded-[1.5rem] hover:bg-secondary hover:scale-105 active:scale-95 transition-all"><X className="w-5 h-5 text-foreground/60"/></button>
+                    </div>
+                  ) : (
+                    <div 
+                      onClick={() => startEditing(i, slot.title)}
+                      className={`flex-1 p-6 md:p-8 rounded-[2rem] border transition-all duration-500 cursor-pointer relative overflow-hidden group/card
+                        ${slot.type !== 'empty' 
+                          ? 'bg-white/60 dark:bg-black/20 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border-white/80 hover:border-white hover:shadow-[0_16px_48px_rgba(0,0,0,0.06)] hover:-translate-y-1' 
+                          : 'border border-dashed border-foreground/10 hover:border-primary/30 flex items-center min-h-[5rem] hover:bg-white/20'}`}
+                    >
+                      {slot.type !== 'empty' ? (
+                        <div className="flex justify-between items-center w-full relative z-10">
+                          <h4 className="font-serif text-xl md:text-2xl text-foreground/90 tracking-tight">{language === 'ar' ? slot.title : slot.enTitle}</h4>
+                          <button onClick={(e) => { e.stopPropagation(); clearEvent(i); }} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 border border-white/50 opacity-0 group-hover/card:opacity-100 hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all duration-300 shadow-sm text-foreground/40 translate-x-4 group-hover/card:translate-x-0"><X className="w-4 h-4"/></button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 text-foreground/30 group-hover/card:text-primary transition-colors">
+                          <div className="w-8 h-8 rounded-full border border-current flex items-center justify-center border-dashed group-hover/card:border-solid">
+                            <Plus className="w-4 h-4" />
+                          </div>
+                          <span className="text-[10px] font-bold uppercase tracking-[0.2em] leading-none">{language === 'ar' ? 'إضافة موعد' : 'Add Event'}</span>
+                        </div>
+                      )}
+                      
+                      {/* Premium Side Accent */}
+                      {slot.type !== 'empty' && (
+                        <div className="absolute top-0 bottom-0 left-0 w-1.5 bg-gradient-to-b from-primary to-accent rtl:left-auto rtl:right-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500"></div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-
-              {/* Event Card */}
-              <div className="flex-1">
-                {editingIndex === i ? (
-                  <div className="flex gap-3 bg-white dark:bg-card p-4 rounded-2xl border-2 border-primary shadow-2xl animate-in zoom-in-95">
-                    <input 
-                      autoFocus
-                      type="text" 
-                      value={tempTitle}
-                      onChange={(e) => setTempTitle(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && saveEvent(i)}
-                      placeholder={language === 'ar' ? 'اكتب الموعد هنا...' : 'Type event name...'}
-                      className="flex-1 bg-secondary/20 p-3 rounded-xl border-0 outline-none font-bold text-sm"
-                    />
-                    <button onClick={() => saveEvent(i)} className="bg-primary text-white p-3 rounded-xl hover:scale-105 active:scale-95 transition-all shadow-lg"><Check className="w-5 h-5"/></button>
-                    <button onClick={() => setEditingIndex(null)} className="bg-secondary p-3 rounded-xl hover:scale-105 active:scale-95 transition-all"><X className="w-5 h-5"/></button>
-                  </div>
-                ) : (
-                  <div 
-                    onClick={() => startEditing(i, slot.title)}
-                    className={`flex-1 p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden group/card
-                      ${slot.type !== 'empty' 
-                        ? 'bg-white shadow-lg border-primary/10 dark:bg-card/80 hover:translate-x-2' 
-                        : 'border-dashed border-secondary hover:border-primary/50 flex items-center justify-center min-h-[4.5rem] hover:bg-primary/5'}`}
-                  >
-                    {slot.type !== 'empty' ? (
-                      <div className="flex justify-between items-center w-full">
-                        <h4 className="font-black text-[16px] text-foreground/80 tracking-tight">{language === 'ar' ? slot.title : slot.enTitle}</h4>
-                        <div className="flex gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                           <button onClick={(e) => { e.stopPropagation(); clearEvent(i); }} className="p-2 text-foreground/20 hover:text-red-500 transition-colors"><X className="w-4 h-4"/></button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-primary/40 group-hover:text-primary transition-colors">
-                        <Plus className="w-4 h-4" />
-                        <span className="text-[10px] font-black uppercase tracking-widest leading-none">{language === 'ar' ? 'إضافة موعد' : 'Add Event'}</span>
-                      </div>
-                    )}
-                    {slot.type !== 'empty' && (
-                      <div className="absolute top-0 bottom-0 left-0 w-1 bg-primary/20 rtl:left-auto rtl:right-0 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </div>

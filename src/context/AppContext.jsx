@@ -52,11 +52,12 @@ export const AppProvider = ({ children }) => {
     showNotification(language === 'ar' ? 'تم تحديث الإعدادات بنجاح! ✨' : 'Settings updated successfully! ✨');
   };
 
-  // Apply theme class to body
+  // Apply theme class to document
   useEffect(() => {
-    document.body.className = "";
-    if (theme === "calm") document.body.classList.add("theme-calm");
-    if (theme === "elegant") document.body.classList.add("theme-elegant");
+    document.documentElement.classList.remove("dark");
+    if (theme === "dark" || theme === "elegant") {
+      document.documentElement.classList.add("dark");
+    }
   }, [theme]);
 
   // Apply RTL/LTR and font
