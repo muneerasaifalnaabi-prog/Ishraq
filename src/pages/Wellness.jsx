@@ -184,7 +184,7 @@ const Wellness = () => {
                   {language === 'ar' ? 'تحدي حب الذات — يوم ١٢' : '30-Day Self-Love — Day 12'}
                 </span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-background/50 relative z-10 text-center">
-                  {language === 'ar' ? 'أكملي تحدي اليوم لبناء سلسلتك' : 'Complete today's challenge to build your streak'}
+                  {language === 'ar' ? 'أكملي تحدي اليوم لبناء سلسلتك' : "Complete today's challenge to build your streak"}
                 </span>
              </div>
           </div>
