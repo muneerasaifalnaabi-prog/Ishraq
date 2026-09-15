@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Activity, Star, Calendar as CalendarIcon, ChevronLeft, ChevronRight, CheckCircle2, X, Plus, Flame } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { habitService } from '../services/api';
@@ -236,7 +237,7 @@ const Habits = () => {
       </div>
 
       {/* Elegant Add Habit Modal */}
-      {isModalOpen && (
+      {isModalOpen && createPortal(
         <div className="fixed inset-0 bg-background/60 backdrop-blur-3xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-700">
           <div className="glass-premium w-full max-w-2xl rounded-[3.5rem] p-16 shadow-[0_40px_80px_rgba(0,0,0,0.15)] border border-white/60 dark:border-white/10 relative animate-in zoom-in-95 duration-500">
             <button
@@ -270,7 +271,8 @@ const Habits = () => {
               </button>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Settings as SettingsIcon, Palette, Globe, Volume2, Shield, Camera, Check, X } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
@@ -249,7 +250,7 @@ const Settings = () => {
       </div>
 
       {/* ══ Avatar Picker Modal ════════════════════════════════════ */}
-      {showPicker && (
+      {showPicker && createPortal(
         <div className="fixed inset-0 bg-background/60 backdrop-blur-3xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-500">
           <div className="glass-premium w-full max-w-2xl rounded-[3rem] p-12 shadow-[0_40px_80px_rgba(0,0,0,0.2)] relative animate-in zoom-in-95 duration-500">
             <button onClick={() => setShowPicker(false)}
@@ -286,7 +287,8 @@ const Settings = () => {
               ))}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

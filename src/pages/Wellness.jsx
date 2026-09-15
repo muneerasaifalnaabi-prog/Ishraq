@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Heart, Sparkles, CalendarHeart, Droplets, CheckCircle2, Plus, Info, Zap, X,
   Sun, Moon, Flower2, Droplet, BedDouble, Dumbbell, Drama, Wind, Smile, Brain
@@ -223,7 +224,7 @@ const Wellness = () => {
       </div>
 
       {/* ── Log Symptom Modal ── */}
-      {isLogging && (
+      {isLogging && createPortal(
         <div className="fixed inset-0 bg-background/60 backdrop-blur-3xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-500">
            <div className="glass-premium w-full max-w-xl rounded-[3rem] p-14 shadow-[0_40px_80px_rgba(0,0,0,0.15)] relative animate-in zoom-in-95 duration-500">
               <button
@@ -255,7 +256,8 @@ const Wellness = () => {
                  ))}
               </div>
            </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

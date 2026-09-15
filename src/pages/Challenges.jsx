@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Target, Trophy, Users, Timer, Sparkles, CheckCircle2, ArrowUpRight, Plus, Gift } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
@@ -281,7 +282,7 @@ const CreateChallengeModal = ({ language, t, categoryKeys, categoryLabels, onClo
     onCreate(name.trim(), categoryKey);
   };
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-background/60 backdrop-blur-3xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-500" onClick={onClose}>
       <div
         className="glass-premium w-full max-w-xl rounded-[3rem] p-12 shadow-[0_40px_80px_rgba(0,0,0,0.15)] relative animate-in zoom-in-95 duration-500"
@@ -333,7 +334,8 @@ const CreateChallengeModal = ({ language, t, categoryKeys, categoryLabels, onClo
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
