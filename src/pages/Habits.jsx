@@ -18,6 +18,9 @@ const Habits = () => {
 
   useEffect(() => {
     habitService.getHabits().then(data => {
+      if (data === null) {
+        showNotification(language === 'ar' ? 'تعذر تحميل العادات. تحققي من الاتصال.' : 'Could not load habits. Check your connection.', 'error');
+      }
       setHabitsList(data || []);
       setIsLoading(false);
     });
@@ -49,6 +52,10 @@ const Habits = () => {
     };
     
     const savedHabit = await habitService.addHabit(habitData);
+    if (savedHabit === null) {
+      showNotification(t('errorGeneric'), 'error');
+      return;
+    }
     setHabitsList(prev => [savedHabit, ...prev]);
     setIsModalOpen(false);
     setNewHabit({ name: '', enName: '', color: 'bg-primary' });
@@ -103,12 +110,13 @@ const Habits = () => {
         
         {/* Left Column: Active Habits (Spans 7 cols) */}
         <div className="xl:col-span-7 flex flex-col gap-8">
-          <h3 className="text-[11px] font-bold text-foreground/50 flex items-center gap-4 uppercase tracking-[0.3em] mb-2 pl-2">
+          <h3 className="text-[11px] font-bold text-foreground/50 flex items-center gap-4 uppercase tracking-[0.3em] mb-2 ps-2">
              <Star className="w-5 h-5 text-primary fill-primary/30" />
              {language === 'ar' ? 'العادات الحالية' : 'Active Habits'}
           </h3>
-          
+
           <div className="space-y-6">
+            {isLoading && <SkeletonListRows count={3} rowClassName="h-40" />}
             {habitsList.length === 0 && !isLoading && (
                <div className="glass-light p-10 rounded-[2rem] text-center">
                   <p className="text-sm font-serif text-foreground/60 italic">{language === 'ar' ? 'لا توجد عادات بعد. ابدأ رحلتك الآن.' : 'No habits yet. Start your journey now.'}</p>
@@ -132,7 +140,7 @@ const Habits = () => {
                     <div className="flex items-center gap-3 bg-background/50 backdrop-blur-md px-5 py-2.5 rounded-full border border-secondary shadow-sm">
                       <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/80">{h.streak} / {h.maxStreak}</span>
                     </div>
-                    <span className="text-[9px] font-bold text-primary uppercase tracking-widest pr-2">{language === 'ar' ? '🔥 استمر' : '🔥 Keep going'}</span>
+                    <span className="text-[9px] font-bold text-primary uppercase tracking-widest pe-2">{language === 'ar' ? '🔥 استمر' : '🔥 Keep going'}</span>
                   </div>
                 </div>
                 
@@ -164,8 +172,8 @@ const Habits = () => {
                 </div>
               </div>
               <div className="flex gap-2 bg-background/50 backdrop-blur-md p-2 rounded-full border border-secondary shadow-sm">
-                <button onClick={() => navigateMonth(-1)} className="p-3.5 bg-card rounded-full shadow-sm hover:bg-foreground hover:text-background transition-all duration-300"><ChevronLeft className="w-5 h-5"/></button>
-                <button onClick={() => navigateMonth(1)} className="p-3.5 bg-card rounded-full shadow-sm hover:bg-foreground hover:text-background transition-all duration-300"><ChevronRight className="w-5 h-5"/></button>
+                <button onClick={() => navigateMonth(-1)} aria-label={language === 'ar' ? 'الشهر السابق' : 'Previous month'} className="p-3.5 bg-card rounded-full shadow-sm hover:bg-foreground hover:text-background transition-all duration-300"><ChevronLeft className="w-5 h-5 rtl:-scale-x-100"/></button>
+                <button onClick={() => navigateMonth(1)} aria-label={language === 'ar' ? 'الشهر التالي' : 'Next month'} className="p-3.5 bg-card rounded-full shadow-sm hover:bg-foreground hover:text-background transition-all duration-300"><ChevronRight className="w-5 h-5 rtl:-scale-x-100"/></button>
               </div>
             </div>
 
