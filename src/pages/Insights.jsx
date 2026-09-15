@@ -4,7 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { taskService, habitService, moodService } from '../services/api';
 
 const Insights = () => {
-  const { t, language, showNotification } = useAppContext();
+  const { language, showNotification } = useAppContext();
   const [timeRange, setTimeRange] = useState('week');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
@@ -44,11 +44,12 @@ const Insights = () => {
   };
 
   const windowDays = timeRange === 'week' ? 7 : 30;
+  const [nowRef] = useState(() => Date.now());
 
   const tasksInWindow = useMemo(() => {
-    const cutoff = Date.now() - windowDays * 24 * 60 * 60 * 1000;
+    const cutoff = nowRef - windowDays * 24 * 60 * 60 * 1000;
     return tasks.filter(task => !task.created_at || new Date(task.created_at).getTime() >= cutoff);
-  }, [tasks, windowDays]);
+  }, [tasks, windowDays, nowRef]);
 
   const stats = useMemo(() => {
     const total = tasksInWindow.length;
@@ -57,7 +58,14 @@ const Insights = () => {
 
     const urgent = tasksInWindow.filter(task => task.priority === 'مهم');
     const urgentDone = urgent.filter(task => task.done).length;
-    const focus = urgent.length > 0 ? Math.round((urgentDone / urgent.length) * 100) : completion;
+    const taskFocus = urgent.length > 0 ? Math.round((urgentDone / urgent.length) * 100) : completion;
+
+    // Blend in recent mood positivity (mood_index 0-4) as a proxy for focus/energy
+    const recentMoods = moods.slice(-windowDays);
+    const moodScore = recentMoods.length > 0
+      ? Math.round((recentMoods.reduce((sum, m) => sum + (m.mood_index || 0), 0) / recentMoods.length / 4) * 100)
+      : null;
+    const focus = moodScore !== null ? Math.round((taskFocus + moodScore) / 2) : taskFocus;
 
     const habitsAvg = habits.length > 0
       ? Math.round(habits.reduce((sum, h) => sum + (h.progress || 0), 0) / habits.length)
@@ -66,7 +74,7 @@ const Insights = () => {
     const streak = habits.length > 0 ? Math.max(...habits.map(h => h.streak || 0)) : 0;
 
     return { completion, focus, habits: habitsAvg, streak, total, completed };
-  }, [tasksInWindow, habits]);
+  }, [tasksInWindow, habits, moods, windowDays]);
 
   const chartData = useMemo(() => {
     const days = [];

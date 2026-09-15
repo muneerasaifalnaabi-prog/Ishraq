@@ -29,6 +29,7 @@ const Mood = () => {
       setMoodHistory((data || []).map(row => row.mood_index).reverse());
       setIsLoading(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time fetch on mount
   }, []);
 
   const logMood = async (index) => {

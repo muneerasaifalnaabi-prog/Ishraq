@@ -2,6 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Target, Trophy, Users, Timer, Sparkles, CheckCircle2, ArrowUpRight, Plus, Gift } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
+const CATEGORY_KEYS = ['all', 'health', 'mind', 'routine'];
+const CATEGORY_LABELS = {
+  all: { ar: 'الكل', en: 'All' },
+  health: { ar: 'صحة', en: 'Health' },
+  mind: { ar: 'عقل', en: 'Mind' },
+  routine: { ar: 'روتين', en: 'Routine' },
+};
+
 const Challenges = () => {
   const { t, language, showNotification } = useAppContext();
   const [animateIn, setAnimateIn] = useState(false);
@@ -45,19 +53,12 @@ const Challenges = () => {
     showNotification(language === 'ar' ? 'انضممتِ للتحدي! 🎉' : "You're in! Challenge joined 🎉");
   };
 
-  const categoryKeys = ['all', 'health', 'mind', 'routine'];
-  const categoryLabels = {
-    all: { ar: 'الكل', en: 'All' },
-    health: { ar: 'صحة', en: 'Health' },
-    mind: { ar: 'عقل', en: 'Mind' },
-    routine: { ar: 'روتين', en: 'Routine' },
-  };
-  const categories = categoryKeys.map(key => categoryLabels[key][language]);
+  const categories = CATEGORY_KEYS.map(key => CATEGORY_LABELS[key][language]);
 
   const [activeCategory, setActiveCategory] = useState(0);
 
   const filteredChallenges = useMemo(() => {
-    const key = categoryKeys[activeCategory];
+    const key = CATEGORY_KEYS[activeCategory];
     if (key === 'all') return activeChallenges;
     return activeChallenges.filter(c => c.categoryKey === key);
   }, [activeChallenges, activeCategory]);
@@ -133,7 +134,7 @@ const Challenges = () => {
             
             <div className="flex justify-between items-start mb-10 relative z-10">
                <div>
-                  <span className={`text-[9px] font-bold uppercase tracking-[0.4em] ${challenge.textAccent} mb-3 block`}>{categoryLabels[challenge.categoryKey][language]}</span>
+                  <span className={`text-[9px] font-bold uppercase tracking-[0.4em] ${challenge.textAccent} mb-3 block`}>{CATEGORY_LABELS[challenge.categoryKey][language]}</span>
                   <h3 className="text-3xl font-serif text-foreground/90 tracking-tight leading-tight">{language === 'ar' ? challenge.name : challenge.enName}</h3>
                </div>
                <div className="flex items-center gap-2 bg-white/60 dark:bg-black/20 px-4 py-2.5 rounded-full border border-white/50 shadow-sm backdrop-blur-md">
@@ -243,8 +244,8 @@ const Challenges = () => {
         <CreateChallengeModal
           language={language}
           t={t}
-          categoryKeys={categoryKeys.filter(k => k !== 'all')}
-          categoryLabels={categoryLabels}
+          categoryKeys={CATEGORY_KEYS.filter(k => k !== 'all')}
+          categoryLabels={CATEGORY_LABELS}
           onClose={() => setShowCreateModal(false)}
           onCreate={(name, categoryKey) => {
             setActiveChallenges(prev => [...prev, {

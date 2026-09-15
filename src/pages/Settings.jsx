@@ -17,6 +17,7 @@ import av10 from '../assets/avatar/uifaces-cartoon-avatar (10).jpg';
 const AVATARS = [av0, av1, av2, av3, av4, av5, av6, av7, av8, av9, av10];
 
 /* ── Shared row component ─────────────────────────────────────────── */
+// eslint-disable-next-line no-unused-vars -- Icon is used in the JSX below; base no-unused-vars doesn't see JSX-only usage without eslint-plugin-react
 const PrefRow = ({ icon: Icon, label, children }) => (
   <div className="flex items-center justify-between gap-6 p-6 rounded-2xl bg-background/40 border border-secondary transition-all duration-300 hover:border-primary/20 hover:bg-background/60">
     <div className="flex items-center gap-4">

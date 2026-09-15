@@ -24,6 +24,7 @@ const Habits = () => {
       setHabitsList(data || []);
       setIsLoading(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time fetch on mount
   }, []);
 
   const [isModalOpen, setIsModalOpen] = useState(false);

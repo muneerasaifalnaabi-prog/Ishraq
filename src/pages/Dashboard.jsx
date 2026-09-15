@@ -34,6 +34,7 @@ const Dashboard = () => {
       setHabits((habitData || []).slice(0, 4));
       setIsLoading(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time fetch on mount
   }, []);
 
   const toggleTask = async (id) => {

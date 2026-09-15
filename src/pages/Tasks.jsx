@@ -24,6 +24,7 @@ const Tasks = () => {
       setTasks(data || []);
       setIsLoading(false);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time fetch on mount
   }, []);
 
   const [newTask, setNewTask] = useState('');
