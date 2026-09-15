@@ -69,7 +69,7 @@ const Challenges = () => {
   const claimReward = (id) => {
     if (claimedRewards.includes(id)) return;
     setClaimedRewards(prev => [...prev, id]);
-    showNotification(language === 'ar' ? 'تم استلام مكافأتك! 🎁' : 'Reward claimed! 🎁');
+    showNotification(language === 'ar' ? 'تم استلام مكافأتك!' : 'Reward claimed!');
   };
 
   return (
