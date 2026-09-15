@@ -23,7 +23,10 @@ const Mood = () => {
 
   useEffect(() => {
     moodService.getMoods().then(data => {
-      setMoodHistory(data.map(row => row.mood_index).reverse());
+      if (data === null) {
+        showNotification(language === 'ar' ? 'تعذر تحميل بيانات المزاج. تحققي من الاتصال.' : 'Could not load mood data. Check your connection.', 'error');
+      }
+      setMoodHistory((data || []).map(row => row.mood_index).reverse());
       setIsLoading(false);
     });
   }, []);
@@ -34,7 +37,11 @@ const Mood = () => {
       mood_index: index,
       date: new Date().toISOString().split('T')[0]
     };
-    await moodService.addMood(moodData);
+    const result = await moodService.addMood(moodData);
+    if (result === null) {
+      showNotification(t('errorGeneric'), 'error');
+      return;
+    }
     setMoodHistory(prev => [...prev, index].slice(-10));
   };
 
@@ -124,7 +131,14 @@ const Mood = () => {
                {[1,2,3,4,5].map(i => <div key={i} className="w-full border-t border-foreground border-dashed h-0" />)}
             </div>
 
-            {moodHistory.map((val, i) => (
+            {isLoading && (
+              <div className="absolute inset-0 flex items-end gap-2 md:gap-4 px-2">
+                {[40, 65, 30, 80, 55, 70, 45].map((h, i) => (
+                  <div key={i} className="flex-1 max-w-[3rem] rounded-full bg-foreground/5 animate-pulse" style={{ height: `${h}%`, animationDelay: `${i * 80}ms` }} />
+                ))}
+              </div>
+            )}
+            {!isLoading && moodHistory.map((val, i) => (
                <div key={i} className="flex-1 flex flex-col items-center justify-end gap-4 group relative h-full">
                  <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 text-2xl z-20 pointer-events-none drop-shadow-md">
                    {emojis[val]}

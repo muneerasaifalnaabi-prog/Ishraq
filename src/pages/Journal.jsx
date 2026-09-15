@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { PenLine, Book, Sparkles, Save, Calendar, Feather } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { journalService } from '../services/api';
+import { SkeletonListRows } from '../components/Skeleton';
 
 const Journal = () => {
-  const { t, language } = useAppContext();
+  const { t, language, showNotification } = useAppContext();
   const [animateIn, setAnimateIn] = useState(false);
   
   useEffect(() => {
@@ -20,6 +21,9 @@ const Journal = () => {
 
   useEffect(() => {
     journalService.getEntries().then(data => {
+      if (data === null) {
+        showNotification(language === 'ar' ? 'تعذر تحميل المذكرات. تحققي من الاتصال.' : 'Could not load journal entries. Check your connection.', 'error');
+      }
       setPastEntries(data || []);
       setIsLoading(false);
     });
