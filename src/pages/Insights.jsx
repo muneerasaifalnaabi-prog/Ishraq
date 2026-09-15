@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { BarChart3, TrendingUp, PieChart, Calendar, ArrowUpRight, Zap, RefreshCw, Sparkles, Activity } from 'lucide-react';
+import { BarChart3, TrendingUp, PieChart, Calendar, ArrowUpRight, Zap, RefreshCw, Sparkles, Activity, Check } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { taskService, habitService, moodService } from '../services/api';
 
