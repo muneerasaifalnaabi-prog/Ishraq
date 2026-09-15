@@ -5,13 +5,19 @@ import { CheckCircle, AlertCircle, X, Bell } from 'lucide-react';
 const Notification = () => {
   const { notification, language } = useAppContext();
   const [isVisible, setIsVisible] = useState(false);
+  const [prevNotification, setPrevNotification] = useState(null);
+
+  // Show immediately when a new notification arrives (adjusting state while rendering,
+  // per React's guidance, rather than a synchronous setState inside an effect).
+  if (notification !== prevNotification) {
+    setPrevNotification(notification);
+    if (notification) setIsVisible(true);
+  }
 
   useEffect(() => {
-    if (notification) {
-      setIsVisible(true);
-      const timer = setTimeout(() => setIsVisible(false), 3500);
-      return () => clearTimeout(timer);
-    }
+    if (!notification) return;
+    const timer = setTimeout(() => setIsVisible(false), 3500);
+    return () => clearTimeout(timer);
   }, [notification]);
 
   if (!notification && !isVisible) return null;
