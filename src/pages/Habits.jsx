@@ -191,13 +191,28 @@ const Habits = () => {
                 const isFuture = (item.day > calendarData.currentDay && calendarData.viewMonth === calendarData.currentMonth && calendarData.viewYear === calendarData.currentYear) || (calendarData.viewYear > calendarData.currentYear) || (calendarData.viewYear === calendarData.currentYear && calendarData.viewMonth > calendarData.currentMonth);
                 const isSelected = isToday || (item.day % 3 !== 0 && !isFuture);
 
+                const handleDayClick = () => {
+                  if (isFuture) {
+                    showNotification(language === 'ar' ? 'هذا اليوم لم يأتِ بعد ✨' : 'That day hasn\'t arrived yet ✨');
+                  } else if (isSelected) {
+                    showNotification(language === 'ar' ? `🔥 تم تحقيق الهدف يوم ${item.day}` : `🔥 Goal met on day ${item.day}`);
+                  } else {
+                    showNotification(language === 'ar' ? `يوم ${item.day}: لم يُسجَّل إنجاز` : `Day ${item.day}: no activity logged`);
+                  }
+                };
+
                 return (
-                  <div key={item.key} className={`relative w-12 h-12 flex items-center justify-center rounded-2xl text-sm font-serif transition-all cursor-pointer select-none group
+                  <button
+                    key={item.key}
+                    type="button"
+                    onClick={handleDayClick}
+                    aria-label={`${language === 'ar' ? 'يوم' : 'Day'} ${item.day}`}
+                    className={`relative w-12 h-12 flex items-center justify-center rounded-2xl text-sm font-serif transition-all cursor-pointer select-none group focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50
                     ${isToday ? 'bg-primary text-primary-foreground shadow-[0_8px_24px_rgba(0,0,0,0.15)] scale-110 z-10 font-bold' : ''}
-                    ${isFuture ? 'text-foreground/20' : 
+                    ${isFuture ? 'text-foreground/20' :
                       isSelected ? 'bg-foreground/5 text-foreground border border-foreground/10 shadow-sm' : 'bg-background/40 text-foreground/50 border border-secondary hover:border-foreground/20 hover:bg-background/80'}`}>
                     <span className="relative z-10">{item.day}</span>
-                  </div>
+                  </button>
                 )
               })}
             </div>
@@ -220,9 +235,10 @@ const Habits = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-background/60 backdrop-blur-3xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-700">
           <div className="glass-premium w-full max-w-2xl rounded-[3.5rem] p-16 shadow-[0_40px_80px_rgba(0,0,0,0.15)] border border-white/60 dark:border-white/10 relative animate-in zoom-in-95 duration-500">
-            <button 
+            <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-10 right-10 p-4 hover:bg-secondary rounded-full transition-colors group"
+              aria-label={t('close')}
+              className="absolute top-10 right-10 rtl:right-auto rtl:left-10 p-4 hover:bg-secondary rounded-full transition-colors group"
             >
               <X className="w-6 h-6 text-foreground/50 group-hover:text-foreground transition-colors"/>
             </button>

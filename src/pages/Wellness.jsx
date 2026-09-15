@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Sparkles, CalendarHeart, Droplets, CheckCircle2, Plus, Info, Zap, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 
 const Wellness = () => {
   const { t, language } = useAppContext();
+  const navigate = useNavigate();
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
