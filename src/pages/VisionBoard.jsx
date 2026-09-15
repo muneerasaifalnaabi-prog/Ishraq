@@ -3,7 +3,8 @@ import { Image, Plus, Sparkles, X, Heart, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const VisionBoard = () => {
-  const { t, language } = useAppContext();
+  const { t, language, confirm, showNotification } = useAppContext();
+  const [likedItems, setLikedItems] = useState([]);
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
@@ -37,8 +38,21 @@ const VisionBoard = () => {
     }]);
   };
 
-  const removeVision = (id) => {
+  const removeVision = async (id) => {
+    const ok = await confirm({
+      title: t('confirmDeleteTitle'),
+      message: t('confirmDeleteVision'),
+      confirmLabel: t('delete'),
+      cancelLabel: t('cancel'),
+    });
+    if (!ok) return;
     setVisionItems(prev => prev.filter(item => item.id !== id));
+  };
+
+  const toggleLike = (id) => {
+    setLikedItems(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -88,10 +102,15 @@ const VisionBoard = () => {
                      <h3 className="text-white text-2xl font-serif tracking-tight drop-shadow-md">{language === 'ar' ? item.title : item.enTitle}</h3>
                   </div>
                   <div className="flex gap-2">
-                     <button className="bg-white/10 hover:bg-pink-500 p-3 rounded-full border border-white/20 transition-colors duration-300 backdrop-blur-md text-white">
-                        <Heart className="w-4 h-4" />
+                     <button
+                       onClick={() => toggleLike(item.id)}
+                       aria-pressed={likedItems.includes(item.id)}
+                       aria-label={language === 'ar' ? 'إعجاب' : 'Like'}
+                       className={`p-3 rounded-full border border-white/20 transition-colors duration-300 backdrop-blur-md text-white ${likedItems.includes(item.id) ? 'bg-pink-500' : 'bg-white/10 hover:bg-pink-500'}`}
+                     >
+                        <Heart className={`w-4 h-4 ${likedItems.includes(item.id) ? 'fill-current' : ''}`} />
                      </button>
-                     <button onClick={() => removeVision(item.id)} className="bg-white/10 hover:bg-red-500 p-3 rounded-full border border-white/20 transition-colors duration-300 backdrop-blur-md text-white">
+                     <button onClick={() => removeVision(item.id)} aria-label={t('delete')} className="bg-white/10 hover:bg-red-500 p-3 rounded-full border border-white/20 transition-colors duration-300 backdrop-blur-md text-white">
                         <Trash2 className="w-4 h-4" />
                      </button>
                   </div>
@@ -116,12 +135,12 @@ const VisionBoard = () => {
          <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
          <div className="absolute right-0 top-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] pointer-events-none"></div>
          
-         <p className="text-xl md:text-2xl font-serif text-white/90 italic text-center md:text-left relative z-10 leading-relaxed">
+         <p className="text-xl md:text-2xl font-serif text-white/90 italic text-center md:text-left rtl:md:text-right relative z-10 leading-relaxed">
             {language === 'ar' ? "« تخيلي مستقبلك، ثم ابنيه خطوة بخطوة. »" : "“Imagine your future, then build it step by step.”"}
          </p>
-         
+
          <div className="flex items-center gap-4 relative z-10">
-            <div className="flex -space-x-4">
+            <div className="flex -space-x-4 rtl:space-x-reverse">
                {[1, 2, 3, 4].map(i => (
                  <div key={i} className="w-12 h-12 rounded-full border-[3px] border-[#1e293b] overflow-hidden shadow-lg hover:-translate-y-2 transition-transform duration-300">
                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+15}&backgroundColor=b6e3f4`} alt="user" className="w-full h-full object-cover" />

@@ -165,7 +165,7 @@ const Settings = () => {
           {/* Stats */}
           <div className="w-full grid grid-cols-2 gap-4 pt-8 border-t border-secondary">
             {[
-              { label: 'Level', value: '5' },
+              { label: t('level'), value: '5' },
               { label: language === 'ar' ? 'نقاط' : 'Points', value: '1,250' },
             ].map(({ label, value }) => (
               <div key={label} className="flex flex-col items-center justify-center p-6 rounded-2xl bg-background/40 border border-secondary hover:border-primary/20 transition-all duration-300">
@@ -218,9 +218,7 @@ const Settings = () => {
                   ${soundEnabled ? 'bg-primary border-primary' : 'bg-secondary border-secondary'}`}
               >
                 <div className={`w-5 h-5 bg-background rounded-full absolute top-[3px] transition-all duration-400 shadow-md
-                  ${soundEnabled
-                    ? (language === 'ar' ? 'right-[1.75rem]' : 'left-[1.75rem]')
-                    : (language === 'ar' ? 'right-[3px]' : 'left-[3px]')}`}
+                  ${soundEnabled ? 'left-[1.75rem] rtl:left-auto rtl:right-[1.75rem]' : 'left-[3px] rtl:left-auto rtl:right-[3px]'}`}
                 />
               </button>
             </PrefRow>
@@ -254,7 +252,8 @@ const Settings = () => {
         <div className="fixed inset-0 bg-background/60 backdrop-blur-3xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-500">
           <div className="glass-premium w-full max-w-2xl rounded-[3rem] p-12 shadow-[0_40px_80px_rgba(0,0,0,0.2)] relative animate-in zoom-in-95 duration-500">
             <button onClick={() => setShowPicker(false)}
-              className="absolute top-8 right-8 p-3 hover:bg-secondary rounded-full transition-colors group">
+              aria-label={t('close')}
+              className="absolute top-8 right-8 rtl:right-auto rtl:left-8 p-3 hover:bg-secondary rounded-full transition-colors group">
               <X className="w-5 h-5 text-foreground/50 group-hover:text-foreground" />
             </button>
 

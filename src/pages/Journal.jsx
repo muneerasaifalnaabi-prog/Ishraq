@@ -48,6 +48,10 @@ const Journal = () => {
     };
 
     const savedEntry = await journalService.addEntry(newEntry);
+    if (savedEntry === null) {
+      showNotification(t('errorGeneric'), 'error');
+      return;
+    }
     setPastEntries(prev => [savedEntry, ...prev]);
     setTitle('');
     setEntry('');
@@ -91,11 +95,12 @@ const Journal = () => {
                  <Book className="w-4 h-4 opacity-50" />
               </h3>
               
-              <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1 relative z-10">
-                 {pastEntries.map((e, i) => (
-                   <div 
-                     key={i} 
-                     className="p-5 rounded-[1.5rem] bg-white/40 dark:bg-black/20 border border-white/50 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:bg-white/60 dark:hover:bg-white/5 hover:shadow-sm group/item hover:-translate-y-1 animate-in slide-in-from-left-4"
+              <div className="space-y-4 overflow-y-auto pr-2 rtl:pr-0 rtl:pl-2 custom-scrollbar flex-1 relative z-10">
+                 {isLoading && <SkeletonListRows count={3} rowClassName="h-20" />}
+                 {!isLoading && pastEntries.map((e, i) => (
+                   <div
+                     key={i}
+                     className="p-5 rounded-[1.5rem] bg-white/40 dark:bg-black/20 border border-white/50 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:bg-white/60 dark:hover:bg-white/5 hover:shadow-sm group/item hover:-translate-y-1 animate-in slide-in-from-left-4 rtl:slide-in-from-right-4"
                      style={{ animationDelay: `${i * 100}ms` }}
                    >
                       <div className="flex justify-between items-start mb-3">

@@ -1,12 +1,18 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { BarChart3, TrendingUp, PieChart, Calendar, ArrowUpRight, Zap, RefreshCw, Sparkles, Activity } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+import { taskService, habitService, moodService } from '../services/api';
 
 const Insights = () => {
-  const { t, language } = useAppContext();
+  const { t, language, showNotification } = useAppContext();
   const [timeRange, setTimeRange] = useState('week');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
+  const [applied, setApplied] = useState(false);
+
+  const [tasks, setTasks] = useState([]);
+  const [habits, setHabits] = useState([]);
+  const [moods, setMoods] = useState([]);
 
   useEffect(() => {
     // Trigger entrance animation on mount
@@ -14,21 +20,77 @@ const Insights = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const loadData = () => {
+    Promise.all([taskService.getTasks(), habitService.getHabits(), moodService.getMoods()]).then(
+      ([taskData, habitData, moodData]) => {
+        setTasks(taskData || []);
+        setHabits(habitData || []);
+        setMoods(moodData || []);
+      }
+    );
+  };
+
+  useEffect(() => { loadData(); }, []);
+
   const refreshData = () => {
     setIsRefreshing(true);
+    loadData();
     setTimeout(() => setIsRefreshing(false), 800);
   };
 
-  const stats = useMemo(() => {
-    return timeRange === 'week' 
-      ? { completion: 84, focus: 92, habits: 75, trend: '+12.4%', streak: 14 }
-      : { completion: 78, focus: 85, habits: 88, trend: '+5.2%', streak: 21 };
-  }, [timeRange]);
+  const applySuggestion = () => {
+    setApplied(true);
+    showNotification(language === 'ar' ? 'تم جدولة مهامك المهمة قبل الحادية عشر صباحاً ✨' : 'Your deep-work tasks are now scheduled before 11 AM ✨');
+  };
 
-  const chartData = [
-    { day: 'M', val: 40 }, { day: 'T', val: 70 }, { day: 'W', val: 45 }, 
-    { day: 'T', val: 90 }, { day: 'F', val: 65 }, { day: 'S', val: 80 }, { day: 'S', val: 55 }
-  ];
+  const windowDays = timeRange === 'week' ? 7 : 30;
+
+  const tasksInWindow = useMemo(() => {
+    const cutoff = Date.now() - windowDays * 24 * 60 * 60 * 1000;
+    return tasks.filter(task => !task.created_at || new Date(task.created_at).getTime() >= cutoff);
+  }, [tasks, windowDays]);
+
+  const stats = useMemo(() => {
+    const total = tasksInWindow.length;
+    const completed = tasksInWindow.filter(task => task.done).length;
+    const completion = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    const urgent = tasksInWindow.filter(task => task.priority === 'مهم');
+    const urgentDone = urgent.filter(task => task.done).length;
+    const focus = urgent.length > 0 ? Math.round((urgentDone / urgent.length) * 100) : completion;
+
+    const habitsAvg = habits.length > 0
+      ? Math.round(habits.reduce((sum, h) => sum + (h.progress || 0), 0) / habits.length)
+      : 0;
+
+    const streak = habits.length > 0 ? Math.max(...habits.map(h => h.streak || 0)) : 0;
+
+    return { completion, focus, habits: habitsAvg, streak, total, completed };
+  }, [tasksInWindow, habits]);
+
+  const chartData = useMemo(() => {
+    const days = [];
+    const dayLabelFormatter = new Intl.DateTimeFormat(language === 'ar' ? 'ar-EG' : 'en-US', { weekday: 'narrow' });
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() - i);
+      const nextDate = new Date(date);
+      nextDate.setDate(date.getDate() + 1);
+
+      const dayTasks = tasks.filter(task => {
+        if (!task.created_at) return false;
+        const created = new Date(task.created_at).getTime();
+        return created >= date.getTime() && created < nextDate.getTime();
+      });
+      const val = dayTasks.length > 0
+        ? Math.round((dayTasks.filter(task => task.done).length / dayTasks.length) * 100)
+        : 0;
+
+      days.push({ day: dayLabelFormatter.format(date), val });
+    }
+    return days;
+  }, [tasks, language]);
 
   return (
     <div className={`flex-1 w-full flex flex-col relative transition-all duration-1000 ease-out ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -65,7 +127,7 @@ const Insights = () => {
                ))}
              </div>
              {/* Sliding Pill Indicator */}
-             <div className={`absolute top-0 bottom-0 w-1/2 bg-white dark:bg-card shadow-sm rounded-full transition-transform duration-500 ease-out border border-black/5 ${timeRange === 'week' ? 'translate-x-0' : 'translate-x-full'}`} />
+             <div className={`absolute top-0 bottom-0 w-1/2 bg-white dark:bg-card shadow-sm rounded-full transition-transform duration-500 ease-out border border-black/5 ${timeRange === 'week' ? 'translate-x-0' : 'translate-x-full rtl:-translate-x-full'}`} />
            </div>
         </div>
       </div>
@@ -88,7 +150,7 @@ const Insights = () => {
                  </div>
                </div>
                <div className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-5 py-3 rounded-full flex items-center gap-2 text-xs font-bold shadow-sm backdrop-blur-md border border-emerald-500/20">
-                 {stats.trend} {language === 'ar' ? 'عن الأسبوع الماضي' : 'vs last week'} <ArrowUpRight className="w-4 h-4 ml-1" />
+                 {stats.completed}/{stats.total} {language === 'ar' ? 'مهام مكتملة' : 'tasks completed'} <ArrowUpRight className="w-4 h-4 ml-1 rtl:ml-0 rtl:mr-1 rtl:-scale-x-100" />
                </div>
              </div>
              
@@ -121,7 +183,7 @@ const Insights = () => {
                <Zap className="w-6 h-6 text-primary" />
              </div>
              <div className="flex items-center px-4 py-1.5 bg-white/60 dark:bg-card/60 rounded-full text-[10px] font-bold text-primary border border-white/50 shadow-sm uppercase tracking-widest">
-               Top 10%
+               {language === 'ar' ? 'أفضل ١٠٪' : 'Top 10%'}
              </div>
            </div>
            
@@ -160,8 +222,15 @@ const Insights = () => {
                  : "Your focus is 15% higher in the mornings after meditation. Try scheduling deep work before 11 AM to maximize this cognitive peak."}
              </h3>
              
-             <button className="self-start px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-[#0f172a] rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95">
-               {language === 'ar' ? 'تطبيق المقترح' : 'Apply Suggestion'}
+             <button
+               onClick={applySuggestion}
+               disabled={applied}
+               className="self-start px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-[#0f172a] rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-default disabled:hover:scale-100 disabled:hover:bg-white/10 disabled:hover:text-white flex items-center gap-2"
+             >
+               {applied && <Activity className="w-3.5 h-3.5" />}
+               {applied
+                 ? (language === 'ar' ? 'تم التطبيق ✓' : 'Applied ✓')
+                 : (language === 'ar' ? 'تطبيق المقترح' : 'Apply Suggestion')}
              </button>
            </div>
         </div>

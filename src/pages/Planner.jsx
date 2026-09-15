@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Plus, X, Check, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, Plus, X, Check } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Planner = () => {

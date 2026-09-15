@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Droplet, Dumbbell, BookOpen, Sparkles, Plus, Play,
   Calendar as CalendarIcon, ArrowRight, Activity, CheckCircle2
 } from "lucide-react";
 import { useAppContext } from "../context/AppContext";
+import { taskService, habitService, moodService } from "../services/api";
+import { SkeletonListRows } from "../components/Skeleton";
+
+const HABIT_ICONS = [Droplet, Dumbbell, BookOpen, Sparkles];
 
 const Dashboard = () => {
-  const { t, language } = useAppContext();
+  const { t, language, showNotification } = useAppContext();
+  const navigate = useNavigate();
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
@@ -14,18 +20,42 @@ const Dashboard = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const habits = [
-    { title: "شرب الماء", enTitle: "Water", icon: Droplet, done: 4, target: 8 },
-    { title: "رياضة", enTitle: "Workout", icon: Dumbbell, done: 1, target: 1 },
-    { title: "قراءة", enTitle: "Reading", icon: BookOpen, done: 0, target: 1 },
-    { title: "تأمل", enTitle: "Meditation", icon: Sparkles, done: 0, target: 1 },
-  ];
+  const [tasks, setTasks] = useState([]);
+  const [habits, setHabits] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedMood, setSelectedMood] = useState(null);
 
-  const tasks = [
-    { text: "الرد على الإيميلات", enText: "Reply to emails", enPri: "Normal", priority: "عادي", time: "10:00 AM", done: true },
-    { text: "تحضير وجبة الغداء", enText: "Prepare lunch", enPri: "Urgent", priority: "مهم", time: "01:30 PM", done: false },
-    { text: "جلسة العناية المسائية 🧴", enText: "Evening Skincare 🧴", enPri: "Normal", priority: "عادي", time: "09:00 PM", done: false },
-  ];
+  useEffect(() => {
+    Promise.all([taskService.getTasks(), habitService.getHabits()]).then(([taskData, habitData]) => {
+      if (taskData === null || habitData === null) {
+        showNotification(language === 'ar' ? 'تعذر تحميل بعض البيانات.' : 'Could not load some data.', 'error');
+      }
+      setTasks((taskData || []).slice(0, 3));
+      setHabits((habitData || []).slice(0, 4));
+      setIsLoading(false);
+    });
+  }, []);
+
+  const toggleTask = async (id) => {
+    const task = tasks.find(task => task.id === id);
+    if (!task) return;
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    const result = await taskService.updateTask(id, { done: !task.done });
+    if (result === null) {
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, done: task.done } : t));
+      showNotification(t('errorGeneric'), 'error');
+    }
+  };
+
+  const logQuickMood = async (index) => {
+    setSelectedMood(index);
+    const result = await moodService.addMood({ mood_index: index, date: new Date().toISOString().split('T')[0] });
+    if (result === null) {
+      showNotification(t('errorGeneric'), 'error');
+      return;
+    }
+    showNotification(language === 'ar' ? 'تم تسجيل مزاجك اليوم ✨' : 'Your mood was logged ✨');
+  };
 
   return (
     <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 auto-rows-max px-2 md:px-6 pb-16 relative transition-all duration-1000 ease-out ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
@@ -58,26 +88,43 @@ const Dashboard = () => {
               <Activity className="w-7 h-7 text-primary" />
               {t("habits")}
             </h2>
-            <button className="bg-secondary hover:bg-primary text-foreground hover:text-primary-foreground p-3.5 rounded-full transition-all duration-300 border border-secondary group/btn shadow-sm hover:shadow-md">
+            <button
+              onClick={() => navigate('/habits')}
+              aria-label={language === 'ar' ? 'إضافة عادة' : 'Add habit'}
+              className="bg-secondary hover:bg-primary text-foreground hover:text-primary-foreground p-3.5 rounded-full transition-all duration-300 border border-secondary group/btn shadow-sm hover:shadow-md"
+            >
               <Plus className="w-5 h-5 group-hover/btn:rotate-90 transition-transform duration-300" />
             </button>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 relative z-10">
-            {habits.map((h, i) => {
-              const pct = (h.done / h.target) * 100;
-              const isDone = h.done === h.target;
+            {isLoading && <SkeletonListRows count={4} rowClassName="h-40" />}
+            {!isLoading && habits.length === 0 && (
+              <button
+                onClick={() => navigate('/habits')}
+                className="col-span-2 sm:col-span-4 py-12 rounded-[2rem] border border-dashed border-secondary text-foreground/40 hover:text-primary hover:border-primary/30 transition-all duration-300 text-sm font-serif italic"
+              >
+                {language === 'ar' ? 'لا توجد عادات بعد — ابدئي واحدة الآن' : 'No habits yet — start one now'}
+              </button>
+            )}
+            {!isLoading && habits.map((h, i) => {
+              const Icon = HABIT_ICONS[i % HABIT_ICONS.length];
+              const isDone = h.progress >= 100;
               return (
-                <div key={i} className={`flex flex-col items-center justify-center p-7 rounded-[2rem] border cursor-pointer transition-all duration-500 hover:-translate-y-2 ${isDone ? 'bg-foreground/5 border-foreground/10 shadow-sm' : 'bg-background/50 border-secondary hover:border-primary/30 shadow-sm hover:shadow-lg'}`}>
+                <button
+                  key={h.id}
+                  onClick={() => navigate('/habits')}
+                  className={`flex flex-col items-center justify-center p-7 rounded-[2rem] border cursor-pointer transition-all duration-500 hover:-translate-y-2 text-center ${isDone ? 'bg-foreground/5 border-foreground/10 shadow-sm' : 'bg-background/50 border-secondary hover:border-primary/30 shadow-sm hover:shadow-lg'}`}
+                >
                   <div className={`w-16 h-16 rounded-full border-2 flex items-center justify-center mb-5 transition-all duration-500 ${isDone ? 'bg-primary border-primary shadow-[0_8px_24px_rgba(0,0,0,0.15)]' : 'bg-secondary border-secondary'}`}>
-                    <h.icon className={`w-7 h-7 ${isDone ? 'text-primary-foreground' : 'text-foreground/60'}`} />
+                    <Icon className={`w-7 h-7 ${isDone ? 'text-primary-foreground' : 'text-foreground/60'}`} />
                   </div>
-                  <h3 className="font-serif text-base text-center mb-1 tracking-tight text-foreground">{language === "ar" ? h.title : h.enTitle}</h3>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/50 mb-5">{h.done} / {h.target}</p>
+                  <h3 className="font-serif text-base text-center mb-1 tracking-tight text-foreground">{language === "ar" ? h.name : h.enName}</h3>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/50 mb-5">{h.streak} {language === 'ar' ? 'يوم' : 'day streak'}</p>
                   <div className="w-full bg-secondary rounded-full h-1.5 overflow-hidden">
-                    <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${pct}%` }} />
+                    <div className="bg-primary h-full rounded-full transition-all duration-1000" style={{ width: `${h.progress}%` }} />
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -90,17 +137,35 @@ const Dashboard = () => {
               <CheckCircle2 className="w-7 h-7 text-primary" />
               {t("tasks")}
             </h2>
-            <button className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/50 hover:text-primary transition-colors duration-300">
-              {language === 'ar' ? 'عرض الكل' : 'Show all'} <ArrowRight className="w-4 h-4" />
+            <button
+              onClick={() => navigate('/tasks')}
+              className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/50 hover:text-primary transition-colors duration-300"
+            >
+              {language === 'ar' ? 'عرض الكل' : 'Show all'} <ArrowRight className="w-4 h-4 rtl:-scale-x-100" />
             </button>
           </div>
 
           <div className="space-y-4 relative z-10">
-            {tasks.map((task, i) => (
-              <div key={i} className={`group flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[1.5rem] border transition-all duration-300
+            {isLoading && <SkeletonListRows count={3} rowClassName="h-20" />}
+            {!isLoading && tasks.length === 0 && (
+              <button
+                onClick={() => navigate('/tasks')}
+                className="w-full py-10 rounded-[1.5rem] border border-dashed border-secondary text-foreground/40 hover:text-primary hover:border-primary/30 transition-all duration-300 text-sm font-serif italic text-center"
+              >
+                {language === 'ar' ? 'كل شيء منجز — أضيفي مهمة جديدة' : 'All clear — add a new task'}
+              </button>
+            )}
+            {!isLoading && tasks.map((task) => (
+              <button
+                key={task.id}
+                type="button"
+                role="checkbox"
+                aria-checked={task.done}
+                onClick={() => toggleTask(task.id)}
+                className={`w-full group flex flex-col sm:flex-row sm:items-center justify-between p-6 rounded-[1.5rem] border transition-all duration-300 text-left rtl:text-right
                 ${task.done ? 'bg-background/20 border-transparent opacity-50' : 'bg-background/50 border-secondary hover:border-primary/20 shadow-sm hover:shadow-md'}`}>
                 <div className="flex items-center gap-5">
-                  <div className={`w-9 h-9 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300
+                  <div className={`w-9 h-9 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all duration-300 shrink-0
                     ${task.done ? 'border-primary bg-primary/10' : 'border-secondary group-hover:border-primary/40'}`}>
                     {task.done && <CheckCircle2 className="w-5 h-5 text-primary" />}
                   </div>
@@ -108,15 +173,14 @@ const Dashboard = () => {
                     <h4 className={`font-serif text-xl tracking-tight transition-all ${task.done ? 'line-through text-foreground/40' : 'text-foreground'}`}>
                       {language === "ar" ? task.text : task.enText}
                     </h4>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/40 mt-1">{task.time}</p>
                   </div>
                 </div>
                 {task.priority === 'مهم' && !task.done && (
                   <span className="mt-4 sm:mt-0 self-start sm:self-auto text-[9px] font-bold uppercase tracking-[0.3em] px-5 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 shadow-sm">
-                    {language === "ar" ? task.priority : task.enPri}
+                    {language === "ar" ? 'مهم' : 'Urgent'}
                   </span>
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </section>
@@ -138,9 +202,12 @@ const Dashboard = () => {
                 ? "« أنجزتِ ٥٠٪ من مهامك اليوم. جلسة العناية المسائية في انتظارك. »"
                 : "\u201cYou\u2019ve completed 50% of your tasks. Your evening skincare is next.\u201d"}
             </p>
-            <button className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-full font-bold text-[10px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.3)] active:scale-95 group/btn">
+            <button
+              onClick={() => showNotification(language === 'ar' ? 'تم ضبط التذكير لجلسة العناية المسائية ✨' : 'Reminder set for your evening skincare session ✨')}
+              className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-full font-bold text-[10px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.3)] active:scale-95 group/btn"
+            >
               {language === "ar" ? "نعم، ذكرني" : "Yes, remind me"}
-              <Play className="w-4 h-4 fill-current group-hover/btn:translate-x-1 transition-transform" />
+              <Play className="w-4 h-4 fill-current group-hover/btn:translate-x-1 rtl:group-hover/btn:-translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -178,14 +245,20 @@ const Dashboard = () => {
           <h2 className="text-2xl font-serif tracking-tight text-foreground mb-8">{t("mood")}</h2>
           <div className="flex justify-between items-center bg-background/50 p-3 rounded-full border border-secondary">
             {["😢", "😐", "😊", "😍", "🤩"].map((emoji, i) => (
-              <button key={i} className={`text-2xl w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 hover:scale-125 hover:bg-background
-                 ${i === 3 ? "bg-background shadow-md border border-secondary scale-110" : "grayscale hover:grayscale-0"}`}>
+              <button
+                key={i}
+                onClick={() => logQuickMood(i)}
+                aria-pressed={selectedMood === i}
+                className={`text-2xl w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 hover:scale-125 hover:bg-background
+                 ${selectedMood === i ? "bg-background shadow-md border border-secondary scale-110" : "grayscale hover:grayscale-0"}`}>
                 {emoji}
               </button>
             ))}
           </div>
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-center text-foreground/50 mt-6">
-            {language === "ar" ? "أنتِ تشعرين بالسعادة اليوم! ✨" : "You're feeling happy today! ✨"}
+            {selectedMood === null
+              ? (language === "ar" ? "كيف تشعرين اليوم؟" : "How are you feeling today?")
+              : (language === "ar" ? "تم تسجيل مزاجك اليوم! ✨" : "Your mood is logged for today! ✨")}
           </p>
         </section>
       </div>
