@@ -235,9 +235,9 @@ const Insights = () => {
                disabled={applied}
                className="self-start px-8 py-4 bg-white/10 hover:bg-white text-white hover:text-[#0f172a] rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 backdrop-blur-md border border-white/20 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-default disabled:hover:scale-100 disabled:hover:bg-white/10 disabled:hover:text-white flex items-center gap-2"
              >
-               {applied && <Activity className="w-3.5 h-3.5" />}
+               {applied && <Check className="w-3.5 h-3.5" strokeWidth={2.5} />}
                {applied
-                 ? (language === 'ar' ? 'تم التطبيق ✓' : 'Applied ✓')
+                 ? (language === 'ar' ? 'تم التطبيق' : 'Applied')
                  : (language === 'ar' ? 'تطبيق المقترح' : 'Apply Suggestion')}
              </button>
            </div>

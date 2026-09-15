@@ -71,7 +71,7 @@ export const AppProvider = ({ children }) => {
     if (updates.theme !== undefined) setTheme(updates.theme);
     if (updates.language !== undefined) setLanguage(updates.language);
     
-    showNotification(language === 'ar' ? 'تم تحديث الإعدادات بنجاح! ✨' : 'Settings updated successfully! ✨');
+    showNotification(language === 'ar' ? 'تم تحديث الإعدادات بنجاح!' : 'Settings updated successfully!');
   };
 
   // Apply theme class to document

@@ -29,7 +29,7 @@ const Sidebar = () => {
         <div className="flex items-center justify-between mb-10 text-primary font-bold text-2xl tracking-wide">
           <div className="flex items-center gap-3">
             <Sparkles className="w-8 h-8" strokeWidth={1.5} />
-            <span>Ishraq ✨</span>
+            <span>Ishraq</span>
           </div>
           <button 
             onClick={() => setIsMobileMenuOpen(false)}
