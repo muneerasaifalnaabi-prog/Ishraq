@@ -10,6 +10,8 @@ export const AppProvider = ({ children }) => {
   const [avatarIndex, setAvatarIndex] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [confirmState, setConfirmState] = useState(null);
+  const confirmResolverRef = React.useRef(null);
 
   // Load settings from DB on mount
   useEffect(() => {
@@ -30,6 +32,26 @@ export const AppProvider = ({ children }) => {
     setTimeout(() => {
       setNotification(null);
     }, 4000);
+  };
+
+  // Confirm dialog helper — usage: const ok = await confirm({ title, message });
+  const confirm = ({ title, message, confirmLabel, cancelLabel, danger = true }) => {
+    return new Promise((resolve) => {
+      confirmResolverRef.current = resolve;
+      setConfirmState({
+        title,
+        message,
+        danger,
+        confirmLabel: confirmLabel || (language === 'ar' ? 'تأكيد' : 'Confirm'),
+        cancelLabel: cancelLabel || (language === 'ar' ? 'إلغاء' : 'Cancel'),
+      });
+    });
+  };
+
+  const resolveConfirm = (result) => {
+    if (confirmResolverRef.current) confirmResolverRef.current(result);
+    confirmResolverRef.current = null;
+    setConfirmState(null);
   };
 
   // Sync settings helper
@@ -94,6 +116,18 @@ export const AppProvider = ({ children }) => {
       vibrant: { ar: "وردي حيوي", en: "Vibrant Pink" },
       calm: { ar: "هادئ ومريح", en: "Calm Pastel" },
       elegant: { ar: "فخم وأنيق", en: "Elegant Dark" },
+      add: { ar: "إضافة", en: "Add" },
+      save: { ar: "حفظ", en: "Save" },
+      cancel: { ar: "إلغاء", en: "Cancel" },
+      delete: { ar: "حذف", en: "Delete" },
+      edit: { ar: "تعديل", en: "Edit" },
+      close: { ar: "إغلاق", en: "Close" },
+      loading: { ar: "جارٍ التحميل...", en: "Loading..." },
+      errorGeneric: { ar: "حدث خطأ، حاولي مرة أخرى.", en: "Something went wrong. Please try again." },
+      confirmDeleteTitle: { ar: "هل أنتِ متأكدة؟", en: "Are you sure?" },
+      confirmDeleteTask: { ar: "سيتم حذف هذه المهمة نهائياً ولا يمكن التراجع عن ذلك.", en: "This task will be permanently deleted. This can't be undone." },
+      confirmDeleteVision: { ar: "سيتم حذف هذه الصورة من لوحة إلهامك نهائياً.", en: "This image will be permanently removed from your vision board." },
+      level: { ar: "المستوى", en: "Level" },
     };
     return dictionary[key]?.[language] || key;
   };
@@ -114,6 +148,9 @@ export const AppProvider = ({ children }) => {
         setIsMobileMenuOpen,
         notification,
         showNotification,
+        confirmState,
+        confirm,
+        resolveConfirm,
         t,
       }}
     >

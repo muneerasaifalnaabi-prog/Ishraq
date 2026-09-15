@@ -17,8 +17,10 @@ const Notification = () => {
   if (!notification && !isVisible) return null;
 
   return (
-    <div 
-      className={`fixed top-6 left-6 right-6 md:left-auto md:right-10 z-[3000] transform transition-all duration-500 ease-out ${
+    <div
+      role="status"
+      aria-live="polite"
+      className={`fixed top-6 left-6 right-6 md:left-auto md:right-10 rtl:md:right-auto rtl:md:left-10 z-[3000] transform transition-all duration-500 ease-out ${
         isVisible ? 'translate-y-0 opacity-100 scale-100' : '-translate-y-10 opacity-0 scale-95'
       }`}
     >
@@ -43,8 +45,8 @@ const Notification = () => {
           <X className="w-4 h-4" />
         </button>
 
-        <div className="absolute bottom-0 left-0 h-1 bg-primary/20 rounded-full overflow-hidden w-full">
-           <div className={`h-full bg-primary transition-all duration-[3500ms] linear ${isVisible ? 'w-full' : 'w-0'}`}></div>
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary/20 rounded-full overflow-hidden w-full">
+           <div className={`h-full bg-primary transition-all duration-[3500ms] linear rtl:ml-auto ${isVisible ? 'w-full' : 'w-0'}`}></div>
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ import Journal from './pages/Journal';
 import VisionBoard from './pages/VisionBoard';
 import Settings from './pages/Settings';
 import Notification from './components/Notification';
+import ConfirmDialog from './components/ConfirmDialog';
 import { useAppContext } from './context/AppContext';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
   return (
     <Router>
       <Notification />
+      <ConfirmDialog />
       {/* Global Generative Noise Layer */}
       <div className="noise-overlay" />
 

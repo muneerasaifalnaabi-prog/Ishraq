@@ -30,11 +30,11 @@ const Header = () => {
       <div className="flex items-center gap-4">
         {/* Search */}
         <div className="relative hidden lg:block group">
-          <Search className="w-4 h-4 absolute top-1/2 -translate-y-1/2 left-4 text-foreground/40 group-focus-within:text-primary transition-colors" />
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="pl-10 pr-4 py-2.5 rounded-full bg-secondary/50 border border-secondary hover:border-primary/30 focus:border-primary/50 focus:bg-white text-sm outline-none w-64 transition-all duration-300"
+          <Search className="w-4 h-4 absolute top-1/2 -translate-y-1/2 left-4 rtl:left-auto rtl:right-4 text-foreground/40 group-focus-within:text-primary transition-colors" />
+          <input
+            type="text"
+            placeholder={language === 'ar' ? 'بحث...' : 'Search...'}
+            className="pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 rounded-full bg-secondary/50 border border-secondary hover:border-primary/30 focus:border-primary/50 focus:bg-white text-sm outline-none w-64 transition-all duration-300"
           />
         </div>
 
@@ -58,7 +58,7 @@ const Header = () => {
         {/* Notifs */}
         <button className="relative p-3 hidden md:block bg-secondary/50 hover:bg-primary/10 rounded-full transition-colors shadow-sm border border-secondary">
           <Bell className="w-5 h-5 text-foreground/70" />
-          <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-400 rounded-full border-2 border-white"></span>
+          <span className="absolute top-2 right-2 rtl:right-auto rtl:left-2 w-2.5 h-2.5 bg-red-400 rounded-full border-2 border-white"></span>
         </button>
         
         {/* Profile */}

@@ -2,9 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, Trash2, CheckCircle2, AlertCircle, Filter, Circle } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { taskService } from '../services/api';
+import { SkeletonListRows } from '../components/Skeleton';
 
 const Tasks = () => {
-  const { t, language } = useAppContext();
+  const { t, language, confirm, showNotification } = useAppContext();
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
