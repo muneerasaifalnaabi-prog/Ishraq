@@ -141,7 +141,10 @@ const Habits = () => {
                     <div className="flex items-center gap-3 bg-background/50 backdrop-blur-md px-5 py-2.5 rounded-full border border-secondary shadow-sm">
                       <span className="text-[11px] font-bold uppercase tracking-widest text-foreground/80">{h.streak} / {h.maxStreak}</span>
                     </div>
-                    <span className="text-[9px] font-bold text-primary uppercase tracking-widest pe-2">{language === 'ar' ? '🔥 استمر' : '🔥 Keep going'}</span>
+                    <span className="flex items-center gap-1.5 text-[9px] font-bold text-primary uppercase tracking-widest pe-2">
+                      <Flame className="w-3.5 h-3.5 fill-primary/20" strokeWidth={2} />
+                      {language === 'ar' ? 'استمر' : 'Keep going'}
+                    </span>
                   </div>
                 </div>
                 
@@ -194,9 +197,9 @@ const Habits = () => {
 
                 const handleDayClick = () => {
                   if (isFuture) {
-                    showNotification(language === 'ar' ? 'هذا اليوم لم يأتِ بعد ✨' : 'That day hasn\'t arrived yet ✨');
+                    showNotification(language === 'ar' ? 'هذا اليوم لم يأتِ بعد' : "That day hasn't arrived yet");
                   } else if (isSelected) {
-                    showNotification(language === 'ar' ? `🔥 تم تحقيق الهدف يوم ${item.day}` : `🔥 Goal met on day ${item.day}`);
+                    showNotification(language === 'ar' ? `تم تحقيق الهدف يوم ${item.day}` : `Goal met on day ${item.day}`);
                   } else {
                     showNotification(language === 'ar' ? `يوم ${item.day}: لم يُسجَّل إنجاز` : `Day ${item.day}: no activity logged`);
                   }

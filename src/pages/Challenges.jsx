@@ -50,7 +50,7 @@ const Challenges = () => {
 
   const joinChallenge = (id) => {
     setActiveChallenges(prev => prev.map(c => c.id === id ? { ...c, joined: true, participants: c.participants + 1 } : c));
-    showNotification(language === 'ar' ? 'انضممتِ للتحدي! 🎉' : "You're in! Challenge joined 🎉");
+    showNotification(language === 'ar' ? 'انضممتِ للتحدي!' : "You're in! Challenge joined");
   };
 
   const categories = CATEGORY_KEYS.map(key => CATEGORY_LABELS[key][language]);
