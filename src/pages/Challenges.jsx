@@ -233,7 +233,7 @@ const Challenges = () => {
                     : 'bg-white/10 hover:bg-white/20 border-white/20 cursor-pointer hover:-translate-y-2'}`}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                {claimedRewards.includes(i) ? <Gift className="w-6 h-6 text-white/40" /> : '🎁'}
+                <Gift className={`w-6 h-6 ${claimedRewards.includes(i) ? 'text-white/40' : 'text-yellow-400'}`} strokeWidth={claimedRewards.includes(i) ? 1.5 : 2} />
               </button>
             ))}
          </div>
@@ -263,7 +263,7 @@ const Challenges = () => {
             }]);
             setActiveCategory(0);
             setShowCreateModal(false);
-            showNotification(language === 'ar' ? 'تم إنشاء تحديك بنجاح! ✨' : 'Your challenge was created! ✨');
+            showNotification(language === 'ar' ? 'تم إنشاء تحديك بنجاح!' : 'Your challenge was created!');
           }}
         />
       )}
