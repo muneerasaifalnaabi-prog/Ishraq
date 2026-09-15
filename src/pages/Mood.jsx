@@ -4,7 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { moodService } from '../services/api';
 
 const Mood = () => {
-  const { t, language } = useAppContext();
+  const { t, language, showNotification } = useAppContext();
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {

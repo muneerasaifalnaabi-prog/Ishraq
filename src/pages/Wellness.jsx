@@ -94,8 +94,8 @@ const Wellness = () => {
               </span>
               <div className="relative flex items-center justify-center mb-6">
                  <span className="text-9xl font-serif tracking-tighter text-foreground">14</span>
-                 <div className="absolute top-0 right-[-1.5rem] w-4 h-4 bg-primary rounded-full border-2 border-background animate-ping opacity-60" />
-                 <div className="absolute top-0 right-[-1.5rem] w-4 h-4 bg-primary rounded-full border-2 border-background shadow-[0_0_15px_rgba(0,0,0,0.2)]" />
+                 <div className="absolute top-0 right-[-1.5rem] rtl:right-auto rtl:left-[-1.5rem] w-4 h-4 bg-primary rounded-full border-2 border-background animate-ping opacity-60" />
+                 <div className="absolute top-0 right-[-1.5rem] rtl:right-auto rtl:left-[-1.5rem] w-4 h-4 bg-primary rounded-full border-2 border-background shadow-[0_0_15px_rgba(0,0,0,0.2)]" />
               </div>
               <p className="text-sm font-medium text-foreground/60 max-w-[75%] leading-relaxed">
                  {language === 'ar' ? 'طاقة مرتفعة ومزاج إيجابي. وقت مثالي للتركيز على المهام الصعبة.' : 'Peak energy & positive mood. Ideal time for complex, demanding tasks.'}
@@ -179,7 +179,11 @@ const Wellness = () => {
              })}
 
              {/* 30-Day Challenge — bold inverted card */}
-             <div className="mt-4 bg-foreground rounded-[2rem] p-10 flex flex-col justify-center items-center cursor-pointer relative overflow-hidden group/card shadow-[0_24px_64px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all duration-500">
+             <button
+               type="button"
+               onClick={() => navigate('/challenges')}
+               className="w-full text-left rtl:text-right mt-4 bg-foreground rounded-[2rem] p-10 flex flex-col justify-center items-center cursor-pointer relative overflow-hidden group/card shadow-[0_24px_64px_rgba(0,0,0,0.2)] hover:-translate-y-1 transition-all duration-500"
+             >
                 <div className="absolute w-64 h-64 bg-primary/20 rounded-full blur-[80px] group-hover/card:bg-primary/40 transition-colors duration-1000 pointer-events-none" />
                 <CalendarHeart className="w-12 h-12 text-background/90 mb-6 relative z-10 group-hover/card:scale-110 transition-transform duration-500" />
                 <span className="font-serif text-3xl text-background tracking-tight relative z-10 mb-3 text-center">
@@ -188,7 +192,7 @@ const Wellness = () => {
                 <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-background/50 relative z-10 text-center">
                   {language === 'ar' ? 'أكملي تحدي اليوم لبناء سلسلتك' : "Complete today's challenge to build your streak"}
                 </span>
-             </div>
+             </button>
           </div>
         </div>
       </div>
@@ -199,7 +203,8 @@ const Wellness = () => {
            <div className="glass-premium w-full max-w-xl rounded-[3rem] p-14 shadow-[0_40px_80px_rgba(0,0,0,0.15)] relative animate-in zoom-in-95 duration-500">
               <button
                 onClick={() => setIsLogging(false)}
-                className="absolute top-10 right-10 p-4 hover:bg-secondary rounded-full transition-colors group">
+                aria-label={t('close')}
+                className="absolute top-10 right-10 rtl:right-auto rtl:left-10 p-4 hover:bg-secondary rounded-full transition-colors group">
                 <X className="w-6 h-6 text-foreground/50 group-hover:text-foreground transition-colors"/>
               </button>
 
