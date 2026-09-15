@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SmilePlus, Heart, TrendingUp, Calendar } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { moodService } from '../services/api';
+import { MOOD_ICONS } from '../constants/moods';
 
 const Mood = () => {
   const { t, language, showNotification } = useAppContext();
@@ -12,7 +13,6 @@ const Mood = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const emojis = ['😢', '😐', '😊', '😍', '🤩'];
   const labels = language === 'ar'
     ? ['حزين', 'عادي', 'جيد', 'سعيد', 'رائع']
     : ['Sad', 'Meh', 'Good', 'Happy', 'Amazing'];
@@ -89,17 +89,17 @@ const Mood = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-5 md:gap-8 relative z-10">
-            {emojis.map((emoji, i) => (
+            {MOOD_ICONS.map((MoodEmojiIcon, i) => (
               <button
                 key={i}
                 onClick={() => logMood(i)}
                 className="group flex flex-col items-center gap-5 min-w-[90px] md:min-w-[110px] transition-all duration-500"
               >
-                <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center text-4xl md:text-5xl transition-all duration-500
+                <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center transition-all duration-500
                   ${selectedMood === i
-                    ? 'bg-foreground shadow-[0_16px_48px_rgba(0,0,0,0.2)] scale-125 border-2 border-foreground/20'
-                    : 'bg-secondary border border-secondary hover:bg-foreground/10 hover:scale-110 grayscale hover:grayscale-0'}`}>
-                   {emoji}
+                    ? 'bg-foreground shadow-[0_16px_48px_rgba(0,0,0,0.2)] scale-125 border-2 border-foreground/20 text-primary-foreground'
+                    : 'bg-secondary border border-secondary hover:bg-foreground/10 hover:scale-110 text-foreground/40 hover:text-foreground/70'}`}>
+                   <MoodEmojiIcon className="w-9 h-9 md:w-11 md:h-11" strokeWidth={1.5} />
                 </div>
                 <span className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all duration-500
                   ${selectedMood === i ? 'opacity-100 text-primary translate-y-0' : 'opacity-0 -translate-y-2 group-hover:opacity-50 group-hover:translate-y-0'}`}>
@@ -139,10 +139,12 @@ const Mood = () => {
                 ))}
               </div>
             )}
-            {!isLoading && moodHistory.map((val, i) => (
+            {!isLoading && moodHistory.map((val, i) => {
+              const TooltipIcon = MOOD_ICONS[val];
+              return (
                <div key={i} className="flex-1 flex flex-col items-center justify-end gap-4 group relative h-full">
-                 <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 text-2xl z-20 pointer-events-none drop-shadow-md">
-                   {emojis[val]}
+                 <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 z-20 pointer-events-none drop-shadow-md text-primary">
+                   {TooltipIcon && <TooltipIcon className="w-6 h-6" strokeWidth={2} />}
                  </div>
                  <div
                    className={`w-full max-w-[3rem] rounded-full transition-all duration-1000 ease-out
@@ -152,7 +154,8 @@ const Mood = () => {
                    style={{ height: `${(val+1)*20}%` }}
                  />
                </div>
-            ))}
+              );
+            })}
 
             {moodHistory.length === 0 && !isLoading && (
               <div className="absolute inset-0 flex items-center justify-center">

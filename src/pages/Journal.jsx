@@ -3,6 +3,7 @@ import { PenLine, Book, Sparkles, Save, Calendar, Feather } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { journalService } from '../services/api';
 import { SkeletonListRows } from '../components/Skeleton';
+import { MOOD_ICONS, MoodIcon } from '../constants/moods';
 
 const Journal = () => {
   const { t, language, showNotification } = useAppContext();
@@ -30,21 +31,21 @@ const Journal = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- one-time fetch on mount
   }, []);
 
-  const emojis = [
-    { icon: '😢', label: language === 'ar' ? 'حزين' : 'Sad' },
-    { icon: '😐', label: language === 'ar' ? 'عادي' : 'Okay' },
-    { icon: '😊', label: language === 'ar' ? 'سعيد' : 'Happy' },
-    { icon: '😍', label: language === 'ar' ? 'ممتن' : 'Grateful' },
-    { icon: '🤩', label: language === 'ar' ? 'متحمس' : 'Excited' }
+  const moods = [
+    { Icon: MOOD_ICONS[0], label: language === 'ar' ? 'حزين' : 'Sad' },
+    { Icon: MOOD_ICONS[1], label: language === 'ar' ? 'عادي' : 'Okay' },
+    { Icon: MOOD_ICONS[2], label: language === 'ar' ? 'سعيد' : 'Happy' },
+    { Icon: MOOD_ICONS[3], label: language === 'ar' ? 'ممتن' : 'Grateful' },
+    { Icon: MOOD_ICONS[4], label: language === 'ar' ? 'متحمس' : 'Excited' }
   ];
 
   const saveEntry = async () => {
     if (!title && !entry) return;
-    
+
     const newEntry = {
       date: new Date().toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }),
       title: title || (language === 'ar' ? 'بدون عنوان' : 'Untitled'),
-      mood: selectedMood !== null ? emojis[selectedMood].icon : '',
+      mood: selectedMood !== null ? String(selectedMood) : '',
       text: entry
     };
 
@@ -106,7 +107,7 @@ const Journal = () => {
                    >
                       <div className="flex justify-between items-start mb-3">
                          <span className="text-[9px] font-bold text-primary uppercase tracking-[0.2em]">{e.date}</span>
-                         <span className="text-xl filter drop-shadow-sm group-hover/item:scale-110 transition-transform">{e.mood}</span>
+                         <MoodIcon value={e.mood} className="w-5 h-5 text-primary drop-shadow-sm group-hover/item:scale-110 transition-transform" />
                       </div>
                       <h4 className="font-serif text-lg text-foreground/80 tracking-tight leading-tight group-hover/item:text-foreground transition-colors">{e.title}</h4>
                    </div>
@@ -155,17 +156,17 @@ const Journal = () => {
                  <div className="flex flex-col gap-5 w-full xl:w-auto">
                     <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/40">{language === 'ar' ? 'مزاج اللحظة' : 'Moment Mood'}</span>
                     <div className="flex gap-2 sm:gap-4 overflow-x-auto pb-2 custom-scrollbar">
-                       {emojis.map((emoji, i) => (
-                         <button 
-                           key={i} 
+                       {moods.map((mood, i) => (
+                         <button
+                           key={i}
                            onClick={() => setSelectedMood(i)}
                            className={`group flex flex-col items-center gap-2 min-w-[60px] transition-all duration-300`}
                          >
-                           <div className={`w-14 h-14 rounded-full flex items-center justify-center text-3xl transition-all duration-300 ${selectedMood === i ? 'bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)] scale-110 border border-white' : 'bg-transparent hover:bg-white/50 grayscale hover:grayscale-0'}`}>
-                             {emoji.icon}
+                           <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 ${selectedMood === i ? 'bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)] scale-110 border border-white text-primary' : 'bg-transparent hover:bg-white/50 text-foreground/30 hover:text-foreground/60'}`}>
+                             <mood.Icon className="w-6 h-6" strokeWidth={1.5} />
                            </div>
                            <span className={`text-[8px] font-bold uppercase tracking-[0.2em] transition-opacity duration-300 ${selectedMood === i ? 'opacity-100 text-primary' : 'opacity-0 group-hover:opacity-40'}`}>
-                             {emoji.label}
+                             {mood.label}
                            </span>
                          </button>
                        ))}

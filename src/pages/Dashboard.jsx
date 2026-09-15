@@ -7,6 +7,7 @@ import {
 import { useAppContext } from "../context/AppContext";
 import { taskService, habitService, moodService } from "../services/api";
 import { SkeletonListRows } from "../components/Skeleton";
+import { MOOD_ICONS } from "../constants/moods";
 
 const HABIT_ICONS = [Droplet, Dumbbell, BookOpen, Sparkles];
 
@@ -55,7 +56,7 @@ const Dashboard = () => {
       showNotification(t('errorGeneric'), 'error');
       return;
     }
-    showNotification(language === 'ar' ? 'تم تسجيل مزاجك اليوم ✨' : 'Your mood was logged ✨');
+    showNotification(language === 'ar' ? 'تم تسجيل مزاجك اليوم' : 'Your mood was logged');
   };
 
   return (
@@ -204,7 +205,7 @@ const Dashboard = () => {
                 : "\u201cYou\u2019ve completed 50% of your tasks. Your evening skincare is next.\u201d"}
             </p>
             <button
-              onClick={() => showNotification(language === 'ar' ? 'تم ضبط التذكير لجلسة العناية المسائية ✨' : 'Reminder set for your evening skincare session ✨')}
+              onClick={() => showNotification(language === 'ar' ? 'تم ضبط التذكير لجلسة العناية المسائية' : 'Reminder set for your evening skincare session')}
               className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-full font-bold text-[10px] uppercase tracking-[0.4em] flex items-center justify-center gap-3 hover:opacity-90 transition-all shadow-[0_8px_30px_rgba(0,0,0,0.3)] active:scale-95 group/btn"
             >
               {language === "ar" ? "نعم، ذكرني" : "Yes, remind me"}
@@ -245,21 +246,26 @@ const Dashboard = () => {
         <section className="glass-premium rounded-[2.5rem] p-9 hover:-translate-y-1 transition-all duration-500">
           <h2 className="text-2xl font-serif tracking-tight text-foreground mb-8">{t("mood")}</h2>
           <div className="flex justify-between items-center bg-background/50 p-3 rounded-full border border-secondary">
-            {["😢", "😐", "😊", "😍", "🤩"].map((emoji, i) => (
+            {MOOD_ICONS.map((MoodEmojiIcon, i) => (
               <button
                 key={i}
                 onClick={() => logQuickMood(i)}
                 aria-pressed={selectedMood === i}
-                className={`text-2xl w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 hover:scale-125 hover:bg-background
-                 ${selectedMood === i ? "bg-background shadow-md border border-secondary scale-110" : "grayscale hover:grayscale-0"}`}>
-                {emoji}
+                className={`w-12 h-12 flex items-center justify-center rounded-full transition-all duration-300 hover:scale-125 hover:bg-background
+                 ${selectedMood === i ? "bg-background shadow-md border border-secondary scale-110 text-primary" : "text-foreground/30 hover:text-foreground/60"}`}>
+                <MoodEmojiIcon className="w-6 h-6" strokeWidth={1.5} />
               </button>
             ))}
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-center text-foreground/50 mt-6">
-            {selectedMood === null
-              ? (language === "ar" ? "كيف تشعرين اليوم؟" : "How are you feeling today?")
-              : (language === "ar" ? "تم تسجيل مزاجك اليوم! ✨" : "Your mood is logged for today! ✨")}
+          <p className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.3em] text-center text-foreground/50 mt-6">
+            {selectedMood === null ? (
+              language === "ar" ? "كيف تشعرين اليوم؟" : "How are you feeling today?"
+            ) : (
+              <>
+                <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                {language === "ar" ? "تم تسجيل مزاجك اليوم!" : "Your mood is logged for today!"}
+              </>
+            )}
           </p>
         </section>
       </div>

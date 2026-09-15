@@ -82,15 +82,10 @@ export const AppProvider = ({ children }) => {
     }
   }, [theme]);
 
-  // Apply RTL/LTR and font
+  // Apply RTL/LTR
   useEffect(() => {
     document.documentElement.dir = language === "ar" ? "rtl" : "ltr";
     document.documentElement.lang = language;
-    if (language === "ar") {
-      document.body.style.fontFamily = "'Cairo', sans-serif";
-    } else {
-      document.body.style.fontFamily = "'Inter', sans-serif";
-    }
   }, [language]);
 
   // Dictionary for basic translations

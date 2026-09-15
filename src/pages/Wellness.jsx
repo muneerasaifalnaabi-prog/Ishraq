@@ -1,7 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Sparkles, CalendarHeart, Droplets, CheckCircle2, Plus, Info, Zap, X } from 'lucide-react';
+import {
+  Heart, Sparkles, CalendarHeart, Droplets, CheckCircle2, Plus, Info, Zap, X,
+  Sun, Moon, Flower2, Droplet, BedDouble, Dumbbell, Drama, Wind, Smile, Brain
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+
+const ROUTINES = [
+  { id: 'morning', name: 'Morning Routine', ar: 'روتين الصباح', steps: 4, Icon: Sun },
+  { id: 'evening', name: 'Evening Routine', ar: 'روتين المساء', steps: 5, Icon: Moon },
+  { id: 'meditation', name: 'Daily Meditation', ar: 'تأمل يومي', steps: 1, Icon: Flower2 },
+];
+
+const SYMPTOM_OPTIONS = [
+  { name: 'Happy', ar: 'سعيدة', Icon: Smile },
+  { name: 'Cramps', ar: 'تشنجات', Icon: Droplet },
+  { name: 'Tired', ar: 'متعبة', Icon: BedDouble },
+  { name: 'Strong', ar: 'قوية', Icon: Dumbbell },
+  { name: 'Moody', ar: 'متقلبة', Icon: Drama },
+  { name: 'Calm', ar: 'هادئة', Icon: Wind },
+];
 
 const Wellness = () => {
   const { t, language } = useAppContext();
@@ -14,21 +32,26 @@ const Wellness = () => {
   }, []);
 
   const [symptoms, setSymptoms] = useState([
-    { id: 1, name: language === 'ar' ? 'طاقة مرتفعة' : 'High Energy', date: 'Today' },
-    { id: 2, name: language === 'ar' ? 'تركيز جيد' : 'Good Focus', date: 'Today' },
+    { id: 1, name: language === 'ar' ? 'طاقة مرتفعة' : 'High Energy', date: 'Today', Icon: Zap },
+    { id: 2, name: language === 'ar' ? 'تركيز جيد' : 'Good Focus', date: 'Today', Icon: Brain },
   ]);
 
   const [isLogging, setIsLogging] = useState(false);
   const [completedRoutines, setCompletedRoutines] = useState([]);
 
-  const logSymptom = (name) => {
-    setSymptoms(prev => [{ id: Date.now(), name, date: 'Today' }, ...prev]);
+  const logSymptom = (option) => {
+    setSymptoms(prev => [{
+      id: Date.now(),
+      name: language === 'ar' ? option.ar : option.name,
+      date: 'Today',
+      Icon: option.Icon,
+    }, ...prev]);
     setIsLogging(false);
   };
 
-  const toggleRoutine = (name) => {
+  const toggleRoutine = (id) => {
     setCompletedRoutines(prev =>
-      prev.includes(name) ? prev.filter(r => r !== name) : [...prev, name]
+      prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]
     );
   };
 
@@ -119,9 +142,10 @@ const Wellness = () => {
                 {symptoms.map((s, i) => (
                   <span
                     key={s.id}
-                    className="px-5 py-2.5 glass-light rounded-full text-[10px] font-bold text-foreground/80 uppercase tracking-[0.2em] animate-in zoom-in-95"
+                    className="flex items-center gap-2 px-5 py-2.5 glass-light rounded-full text-[10px] font-bold text-foreground/80 uppercase tracking-[0.2em] animate-in zoom-in-95"
                     style={{ animationDelay: `${i * 100}ms` }}
                   >
+                    {s.Icon && <s.Icon className="w-3.5 h-3.5 text-primary" strokeWidth={2} />}
                     {s.name}
                   </span>
                 ))}
@@ -148,30 +172,31 @@ const Wellness = () => {
           </div>
 
           <div className="space-y-5 flex-1 relative z-10">
-             {[
-               { name: 'Morning Routine ☀️', ar: 'روتين الصباح ☀️', steps: 4 },
-               { name: 'Evening Routine 🌙', ar: 'روتين المساء 🌙', steps: 5 },
-               { name: 'Daily Meditation 🧘‍♀️', ar: 'تأمل يومي 🧘‍♀️', steps: 1 }
-             ].map((r, i) => {
-               const isDone = completedRoutines.includes(r.name);
+             {ROUTINES.map((r) => {
+               const isDone = completedRoutines.includes(r.id);
                return (
                  <div
-                   key={i}
-                   onClick={() => toggleRoutine(r.name)}
+                   key={r.id}
+                   onClick={() => toggleRoutine(r.id)}
                    className={`p-7 rounded-[2rem] border transition-all duration-500 cursor-pointer flex justify-between items-center group/item
                       ${isDone
                         ? 'bg-foreground/5 border-foreground/10'
                         : 'bg-background/50 border-secondary hover:border-primary/20 shadow-sm hover:shadow-lg hover:-translate-y-1'}`}
                  >
-                   <div className="flex flex-col gap-2">
-                      <span className={`font-serif text-2xl tracking-tight transition-all duration-500 ${isDone ? 'text-foreground/40 line-through italic' : 'text-foreground group-hover/item:text-foreground'}`}>
-                          {language === 'ar' ? r.ar : r.name}
-                      </span>
-                      <span className={`text-[10px] font-bold uppercase tracking-[0.3em] ${isDone ? 'text-foreground/30' : 'text-foreground/50'}`}>
-                        {r.steps} {language === 'ar' ? 'خطوات' : 'steps'}
-                      </span>
+                   <div className="flex items-center gap-5">
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-all duration-500 ${isDone ? 'bg-primary/10 text-primary/50' : 'bg-secondary text-primary'}`}>
+                        <r.Icon className="w-6 h-6" strokeWidth={1.5} />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                         <span className={`font-serif text-2xl tracking-tight transition-all duration-500 ${isDone ? 'text-foreground/40 line-through italic' : 'text-foreground group-hover/item:text-foreground'}`}>
+                             {language === 'ar' ? r.ar : r.name}
+                         </span>
+                         <span className={`text-[10px] font-bold uppercase tracking-[0.3em] ${isDone ? 'text-foreground/30' : 'text-foreground/50'}`}>
+                           {r.steps} {language === 'ar' ? 'خطوات' : 'steps'}
+                         </span>
+                      </div>
                    </div>
-                   <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 ${isDone ? 'bg-primary text-primary-foreground scale-110 shadow-[0_8px_24px_rgba(0,0,0,0.15)]' : 'bg-secondary border border-secondary text-foreground/30 group-hover/item:text-primary group-hover/item:border-primary/20 group-hover/item:scale-110'}`}>
+                   <div className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 shrink-0 ${isDone ? 'bg-primary text-primary-foreground scale-110 shadow-[0_8px_24px_rgba(0,0,0,0.15)]' : 'bg-secondary border border-secondary text-foreground/30 group-hover/item:text-primary group-hover/item:border-primary/20 group-hover/item:scale-110'}`}>
                       <CheckCircle2 className={`w-7 h-7 transition-all ${isDone ? 'stroke-[2.5px]' : 'stroke-[1.5px]'}`} />
                    </div>
                  </div>
@@ -218,19 +243,13 @@ const Wellness = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                 {[
-                   { name: 'Happy 😊', ar: 'سعيدة 😊' },
-                   { name: 'Cramps 🩸', ar: 'تشنجات 🩸' },
-                   { name: 'Tired 😴', ar: 'متعبة 😴' },
-                   { name: 'Strong 💪', ar: 'قوية 💪' },
-                   { name: 'Moody 🎭', ar: 'متقلبة 🎭' },
-                   { name: 'Calm 🧘‍♀️', ar: 'هادئة 🧘‍♀️' }
-                 ].map((s, i) => (
+                 {SYMPTOM_OPTIONS.map((s, i) => (
                    <button
                      key={i}
-                     onClick={() => logSymptom(language === 'ar' ? s.ar : s.name)}
-                     className="p-7 bg-background/50 border border-secondary rounded-[1.5rem] font-serif text-xl text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] transition-all duration-300"
+                     onClick={() => logSymptom(s)}
+                     className="flex flex-col items-center gap-3 p-7 bg-background/50 border border-secondary rounded-[1.5rem] font-serif text-xl text-foreground hover:bg-primary hover:text-primary-foreground hover:border-primary hover:scale-105 hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] transition-all duration-300"
                    >
+                     <s.Icon className="w-7 h-7" strokeWidth={1.5} />
                      {language === 'ar' ? s.ar : s.name}
                    </button>
                  ))}

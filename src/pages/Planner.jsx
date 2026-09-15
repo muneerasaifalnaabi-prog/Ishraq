@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Plus, X, Check } from 'lucide-react';
+import { Calendar, Clock, Plus, X, Check, Droplet, Laptop, Utensils, Users, PenLine } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
+
+const TYPE_ICONS = {
+  selfcare: Droplet,
+  work: Laptop,
+  break: Utensils,
+  meeting: Users,
+  custom: PenLine,
+};
 
 const Planner = () => {
   const { t, language } = useAppContext();
@@ -12,11 +20,11 @@ const Planner = () => {
   }, []);
 
   const [hours, setHours] = useState([
-    { time: '08:00', label: 'صباحاً', enLabel: 'AM', title: 'روتين الصباح 🧴', enTitle: 'Morning Routine 🧴', type: 'selfcare' },
-    { time: '09:00', label: 'صباحاً', enLabel: 'AM', title: 'عمل عميق 💻', enTitle: 'Deep Work 💻', type: 'work' },
+    { time: '08:00', label: 'صباحاً', enLabel: 'AM', title: 'روتين الصباح', enTitle: 'Morning Routine', type: 'selfcare' },
+    { time: '09:00', label: 'صباحاً', enLabel: 'AM', title: 'عمل عميق', enTitle: 'Deep Work', type: 'work' },
     { time: '10:00', label: 'صباحاً', enLabel: 'AM', title: '', enTitle: '', type: 'empty' },
-    { time: '11:00', label: 'صباحاً', enLabel: 'AM', title: 'اجتماع فريق', enTitle: 'Team Meeting', type: 'work' },
-    { time: '12:00', label: 'مساءً', enLabel: 'PM', title: 'استراحة الغداء 🥗', enTitle: 'Lunch Break 🥗', type: 'break' },
+    { time: '11:00', label: 'صباحاً', enLabel: 'AM', title: 'اجتماع فريق', enTitle: 'Team Meeting', type: 'meeting' },
+    { time: '12:00', label: 'مساءً', enLabel: 'PM', title: 'استراحة الغداء', enTitle: 'Lunch Break', type: 'break' },
     { time: '01:00', label: 'مساءً', enLabel: 'PM', title: '', enTitle: '', type: 'empty' },
     { time: '02:00', label: 'مساءً', enLabel: 'PM', title: '', enTitle: '', type: 'empty' },
   ]);
@@ -126,7 +134,17 @@ const Planner = () => {
                     >
                       {slot.type !== 'empty' ? (
                         <div className="flex justify-between items-center w-full relative z-10">
-                          <h4 className="font-serif text-xl md:text-2xl text-foreground/90 tracking-tight">{language === 'ar' ? slot.title : slot.enTitle}</h4>
+                          <div className="flex items-center gap-4">
+                            {(() => {
+                              const TypeIcon = TYPE_ICONS[slot.type];
+                              return TypeIcon ? (
+                                <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                  <TypeIcon className="w-5 h-5" strokeWidth={1.75} />
+                                </div>
+                              ) : null;
+                            })()}
+                            <h4 className="font-serif text-xl md:text-2xl text-foreground/90 tracking-tight">{language === 'ar' ? slot.title : slot.enTitle}</h4>
+                          </div>
                           <button onClick={(e) => { e.stopPropagation(); clearEvent(i); }} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/50 border border-white/50 opacity-0 group-hover/card:opacity-100 hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all duration-300 shadow-sm text-foreground/40 translate-x-4 group-hover/card:translate-x-0"><X className="w-4 h-4"/></button>
                         </div>
                       ) : (

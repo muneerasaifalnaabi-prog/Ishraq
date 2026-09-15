@@ -28,8 +28,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Outfit', '"IBM Plex Sans Arabic"', 'sans-serif'],
-        serif: ['"Playfair Display"', 'Amiri', 'serif'],
+        sans: ['"IBM Plex Sans Arabic"', 'sans-serif'],
+        serif: ['"IBM Plex Sans Arabic"', 'sans-serif'],
       },
       animation: {
         'float': 'float 3s ease-in-out infinite',
