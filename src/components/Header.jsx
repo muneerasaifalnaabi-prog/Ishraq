@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Search, Sun, Moon, Palette, Menu } from 'lucide-react';
+import { Bell, Search, Sun, Moon, Palette, Menu, Sparkles } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 
 const Header = () => {
@@ -16,7 +16,10 @@ const Header = () => {
     <header className="flex flex-col md:flex-row md:items-center justify-between py-4 mb-4 gap-4">
       <div className="flex items-center justify-between w-full md:w-auto">
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-1">{t('hello')}</h1>
+          <h1 className="flex items-center gap-2 text-3xl font-bold mb-1">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">{t('hello')}</span>
+            <Sparkles className="w-6 h-6 text-primary" />
+          </h1>
           <p className="text-sm text-foreground/60 font-medium">{t('quote')}</p>
         </div>
         <button 

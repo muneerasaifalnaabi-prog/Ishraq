@@ -40,7 +40,7 @@ const Insights = () => {
 
   const applySuggestion = () => {
     setApplied(true);
-    showNotification(language === 'ar' ? 'تم جدولة مهامك المهمة قبل الحادية عشر صباحاً ✨' : 'Your deep-work tasks are now scheduled before 11 AM ✨');
+    showNotification(language === 'ar' ? 'تم جدولة مهامك المهمة قبل الحادية عشر صباحاً' : 'Your deep-work tasks are now scheduled before 11 AM');
   };
 
   const windowDays = timeRange === 'week' ? 7 : 30;

@@ -3,7 +3,8 @@ import { PenLine, Book, Sparkles, Save, Calendar, Feather } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { journalService } from '../services/api';
 import { SkeletonListRows } from '../components/Skeleton';
-import { MOOD_ICONS, MoodIcon } from '../constants/moods';
+import { MOOD_ICONS } from '../constants/moods';
+import MoodIcon from '../components/MoodIcon';
 
 const Journal = () => {
   const { t, language, showNotification } = useAppContext();

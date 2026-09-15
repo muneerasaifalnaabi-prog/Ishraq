@@ -1,4 +1,3 @@
-import React from 'react';
 import { Frown, Meh, Smile, Laugh, PartyPopper } from 'lucide-react';
 
 // Shared 0-4 mood scale used by Dashboard, Mood and Journal pages.
@@ -20,11 +19,4 @@ export const moodIndexFromValue = (value) => {
   if (LEGACY_EMOJI_TO_INDEX[value] !== undefined) return LEGACY_EMOJI_TO_INDEX[value];
   const parsed = parseInt(value, 10);
   return Number.isNaN(parsed) ? null : parsed;
-};
-
-export const MoodIcon = ({ value, className }) => {
-  const index = moodIndexFromValue(value);
-  const Icon = index !== null ? MOOD_ICONS[index] : null;
-  if (!Icon) return null;
-  return <Icon className={className} />;
 };

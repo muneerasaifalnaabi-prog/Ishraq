@@ -103,7 +103,7 @@ export const AppProvider = ({ children }) => {
       vision: { ar: "لوحة الأهداف", en: "Vision Board" },
       settings: { ar: "الإعدادات", en: "Settings" },
       assistant: { ar: "المساعد الذكي", en: "Smart Assistant" },
-      hello: { ar: `مرحباً، ${userName} ✨`, en: `Hello, ${userName} ✨` },
+      hello: { ar: `مرحباً، ${userName}`, en: `Hello, ${userName}` },
       quote: {
         ar: "خطوة صغيرة كل يوم تصنع إنجازاً عظيماً.",
         en: "A small step every day creates a great achievement.",
