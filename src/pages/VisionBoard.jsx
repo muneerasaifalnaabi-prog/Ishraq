@@ -47,6 +47,7 @@ const VisionBoard = () => {
     });
     if (!ok) return;
     setVisionItems(prev => prev.filter(item => item.id !== id));
+    showNotification(language === 'ar' ? 'تم حذف الصورة من لوحتك' : 'Removed from your vision board');
   };
 
   const toggleLike = (id) => {
@@ -84,7 +85,7 @@ const VisionBoard = () => {
 
       {/* Masonry-Style Bento Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 flex-1 auto-rows-[200px] relative z-10 p-2 md:p-6">
-        {visionItems.map((item, index) => (
+        {visionItems.map((item) => (
           <div 
             key={item.id} 
             className={`relative rounded-[2.5rem] overflow-hidden group shadow-[0_8px_32px_rgba(0,0,0,0.05)] transition-all duration-700 hover:shadow-[0_16px_48px_rgba(0,0,0,0.15)] hover:scale-[1.02] hover:z-20 border-[6px] border-white/60 dark:border-white/10 bg-white/20
