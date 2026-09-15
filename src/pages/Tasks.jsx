@@ -18,6 +18,9 @@ const Tasks = () => {
 
   useEffect(() => {
     taskService.getTasks().then(data => {
+      if (data === null) {
+        showNotification(language === 'ar' ? 'تعذر تحميل المهام. تحققي من الاتصال.' : 'Could not load tasks. Check your connection.', 'error');
+      }
       setTasks(data || []);
       setIsLoading(false);
     });
@@ -25,41 +28,62 @@ const Tasks = () => {
 
   const [newTask, setNewTask] = useState('');
   const [priority, setPriority] = useState('عادي');
-  const [filter, setFilter] = useState('all'); 
+  const [filter, setFilter] = useState('all');
 
   const filteredTasks = useMemo(() => {
     if (filter === 'all') return tasks;
-    return tasks.filter(t => t.priority === 'مهم');
+    return tasks.filter(task => task.priority === 'مهم');
   }, [tasks, filter]);
 
   const taskStats = useMemo(() => {
     const total = tasks.length;
-    const completed = tasks.filter(t => t.done).length;
+    const completed = tasks.filter(task => task.done).length;
     const pending = total - completed;
     return { total, completed, pending };
   }, [tasks]);
 
   const toggleTask = async (id) => {
-    const task = tasks.find(t => t.id === id);
+    const task = tasks.find(task => task.id === id);
     if (!task) return;
-    await taskService.updateTask(id, { done: !task.done });
     setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+    const result = await taskService.updateTask(id, { done: !task.done });
+    if (result === null) {
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, done: task.done } : t));
+      showNotification(t('errorGeneric'), 'error');
+    }
   };
 
   const deleteTask = async (id) => {
-    await taskService.deleteTask(id);
-    setTasks(prev => prev.filter(t => t.id !== id));
+    const ok = await confirm({
+      title: t('confirmDeleteTitle'),
+      message: t('confirmDeleteTask'),
+      confirmLabel: t('delete'),
+      cancelLabel: t('cancel'),
+    });
+    if (!ok) return;
+
+    const previousTasks = tasks;
+    setTasks(prev => prev.filter(task => task.id !== id));
+    const result = await taskService.deleteTask(id);
+    if (result === null) {
+      setTasks(previousTasks);
+      showNotification(t('errorGeneric'), 'error');
+    }
   };
-  
+
   const addTask = async (e) => {
     e.preventDefault();
     if (!newTask.trim()) return;
-    const taskData = { 
-      text: newTask, 
-      enText: newTask, 
+    const taskData = {
+      text: newTask,
+      enText: newTask,
       priority: priority
     };
     const savedTask = await taskService.addTask(taskData);
+    if (savedTask === null) {
+      showNotification(t('errorGeneric'), 'error');
+      return;
+    }
     setTasks(prev => [savedTask, ...prev]);
     setNewTask('');
     setPriority('عادي');
@@ -80,7 +104,7 @@ const Tasks = () => {
             {language === 'ar' ? 'المهام' : 'Tasks'}
             <CheckCircle2 className="w-8 h-8 text-primary opacity-80" />
           </h2>
-          <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-foreground/40 font-bold ml-1">
+          <p className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-foreground/40 font-bold ms-1">
              {language === 'ar' ? 'إدارة اليوم بفاعلية' : 'Master your day'}
           </p>
         </div>
@@ -100,7 +124,7 @@ const Tasks = () => {
                 {language === 'ar' ? 'مهم' : 'High'}
              </button>
              {/* Slider */}
-             <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-0.375rem)] bg-white dark:bg-card shadow-sm rounded-full transition-transform duration-500 border border-black/5 ${filter === 'all' ? 'translate-x-0' : 'translate-x-full'}`} />
+             <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-0.375rem)] bg-white dark:bg-card shadow-sm rounded-full transition-transform duration-500 border border-black/5 ${filter === 'all' ? 'translate-x-0' : 'translate-x-full rtl:-translate-x-full'}`} />
            </div>
            <button className="p-3 bg-white/60 dark:bg-black/20 rounded-full hover:bg-white dark:hover:bg-white/20 transition-all text-primary hover:shadow-sm">
              <Filter className="w-4 h-4" />
@@ -167,7 +191,8 @@ const Tasks = () => {
 
         {/* List of Tasks */}
         <div className="space-y-4">
-          {filteredTasks.map((task, index) => (
+          {isLoading && <SkeletonListRows count={3} />}
+          {!isLoading && filteredTasks.map((task, index) => (
             <div 
               key={task.id} 
               className={`flex items-center justify-between p-6 md:p-8 rounded-[2rem] border transition-all duration-500 group animate-in slide-in-from-bottom-4
@@ -176,7 +201,13 @@ const Tasks = () => {
                   : 'bg-gradient-to-br from-white/70 to-white/30 dark:from-card/70 dark:to-card/30 border-white/60 shadow-lg hover:shadow-xl hover:-translate-y-1 backdrop-blur-xl'}`}
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              <div className="flex items-center gap-6 cursor-pointer flex-1" onClick={() => toggleTask(task.id)}>
+              <button
+                type="button"
+                role="checkbox"
+                aria-checked={task.done}
+                onClick={() => toggleTask(task.id)}
+                className="flex items-center gap-6 cursor-pointer flex-1 text-left rtl:text-right bg-transparent border-0 p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary/50 rounded-2xl"
+              >
                 <div className="relative flex-shrink-0">
                   {task.done ? (
                     <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center border border-primary/30">
@@ -191,7 +222,7 @@ const Tasks = () => {
                 <span className={`text-lg md:text-xl font-serif transition-all duration-500 ${task.done ? 'line-through text-foreground/40 italic' : 'text-foreground/90'}`}>
                   {language === 'ar' ? task.text : task.enText}
                 </span>
-              </div>
+              </button>
               
               <div className="flex items-center gap-6">
                 {task.priority === 'مهم' && (

@@ -2,9 +2,10 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Activity, Star, Calendar as CalendarIcon, ChevronLeft, ChevronRight, CheckCircle2, X, Plus } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { habitService } from '../services/api';
+import { SkeletonListRows } from '../components/Skeleton';
 
 const Habits = () => {
-  const { t, language } = useAppContext();
+  const { t, language, showNotification } = useAppContext();
   const [animateIn, setAnimateIn] = useState(false);
 
   useEffect(() => {
